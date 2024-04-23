@@ -1,24 +1,24 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["Adapter/Driven/TechLanches.Adapter.AWS.SecretsManager/TechLanches.Adapter.AWS.SecretsManager.csproj", "TechLanches.Adapter.AWS.SecretsManager/"]
-COPY ["Adapter/Driver/TechLanches.Adapter.API/TechLanches.Adapter.API.csproj", "TechLanches.Adapter.API/"]
 COPY ["Adapter/Driven/TechLanches.Adapter.SqlServer/TechLanches.Adapter.SqlServer.csproj", "TechLanches.Adapter.SqlServer/"]
 COPY ["Core/TechLanches.Domain/TechLanches.Domain.csproj", "TechLanches.Domain/"]
 COPY ["Core/TechLanches.Core/TechLanches.Core.csproj", "TechLanches.Core/"]
 COPY ["Core/TechLanches.Application/TechLanches.Application.csproj", "TechLanches.Application/"]
-RUN dotnet restore "TechLanches.Adapter.API/TechLanches.Adapter.API.csproj"
+COPY ["TechLanches.Pedido.API/TechLanches.Pedido.API.csproj", "TechLanches.Pedido.API/"]
+RUN dotnet restore "TechLanches.Pedido.API/TechLanches.Pedido.API.csproj"
 COPY . .
-WORKDIR "/src/Adapter/Driver/TechLanches.Adapter.API"
-RUN dotnet build "TechLanches.Adapter.API.csproj" -c Release -o /app/build
+WORKDIR "/src/TechLanches.Pedido.API"
+RUN dotnet build "TechLanches.Pedido.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TechLanches.Adapter.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "TechLanches.Pedido.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TechLanches.Adapter.API.dll"]
+ENTRYPOINT ["dotnet", "TechLanches.Pedido.API.dll"]
