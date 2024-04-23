@@ -1,0 +1,6 @@
+@TechLanches.Pedido.API_HostAddress = http://localhost:5298
+
+GET {{TechLanches.Pedido.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
