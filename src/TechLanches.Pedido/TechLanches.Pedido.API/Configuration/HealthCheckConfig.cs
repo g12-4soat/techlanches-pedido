@@ -12,7 +12,7 @@ namespace TechLanches.Adapter.API.Configuration
         {
             var serviceProvider = services.BuildServiceProvider();
 
-            var opt = serviceProvider.GetRequiredService<IOptions<TechLanchesDatabaseSecrets>>();
+            var opt = serviceProvider.GetRequiredService<IOptions<TechLanchesPedidoDatabaseSecrets>>();
 
             services.AddHealthChecks()
                 .AddSqlServer(connectionString: DatabaseConfig.GetConnectionString(opt.Value), name: "Banco de dados Tech Lanches")

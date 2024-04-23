@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TechLanches.Adapter.AWS.SecretsManager;
@@ -17,7 +16,7 @@ namespace TechLanches.Adapter.SqlServer
 
             var serviceProvider = services.BuildServiceProvider();
 
-            var opt = serviceProvider.GetRequiredService<IOptions<TechLanchesDatabaseSecrets>>();            
+            var opt = serviceProvider.GetRequiredService<IOptions<TechLanchesPedidoDatabaseSecrets>>();            
 
             services.AddDbContext<TechLanchesDbContext>(config =>
             {
@@ -26,7 +25,7 @@ namespace TechLanches.Adapter.SqlServer
             serviceLifetime);
         }
 
-        public static string GetConnectionString(TechLanchesDatabaseSecrets opt)
+        public static string GetConnectionString(TechLanchesPedidoDatabaseSecrets opt)
         {
             return $"Server={opt.Host},{opt.Port};Database={opt.Database};User Id={opt.Username};Password={opt.Password};TrustServerCertificate=True;";
         }

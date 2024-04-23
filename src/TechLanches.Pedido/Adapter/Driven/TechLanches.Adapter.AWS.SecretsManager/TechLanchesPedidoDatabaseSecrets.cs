@@ -1,6 +1,6 @@
 ﻿namespace TechLanches.Adapter.AWS.SecretsManager
 {
-    public class TechLanchesDatabaseSecrets
+    public class TechLanchesPedidoDatabaseSecrets
     {
         public string Username { get; set; }
         public string Password { get; set; }
