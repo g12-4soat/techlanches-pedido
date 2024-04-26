@@ -12,7 +12,18 @@ on:
   workflow_dispatch:
   
 jobs:
+  test:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+  
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 8.x
 
+      - name: check
+        run: ls
 ##############################################################
   build-and-test:
     runs-on: ubuntu-latest
