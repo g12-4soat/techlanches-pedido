@@ -20,12 +20,6 @@ namespace TechLanches.Application.DTOs
         public int? ClienteId { get; set; }
 
         /// <summary>
-        /// Nome do cliente
-        /// </summary>
-        /// <example>Ana Luiza</example>
-        public string NomeCliente { get; set; }
-
-        /// <summary>
         /// Nome do Status do pedido 
         /// </summary>
         /// <example>PedidoCriado</example>
@@ -44,6 +38,7 @@ namespace TechLanches.Application.DTOs
         public decimal Valor { get; set; }
 
         public List<ItemPedidoResponseDTO> ItensPedido { get; set; }
-        public List<PagamentoResponseDTO> Pagamentos { get; set; }
+
+        public PagamentoResponseDTO Pagamento { get; set; }
     }
 }

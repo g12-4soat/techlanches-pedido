@@ -25,10 +25,19 @@ namespace TechLanches.Adapter.SqlServer.EntityTypeConfigurations
                     v => (StatusPedido)Enum.Parse(typeof(StatusPedido), v))
                   .IsRequired();
 
-            builder.HasOne(x => x.Cliente)
-                .WithMany(c => c.Pedidos)
-                .HasForeignKey(x => x.ClienteId)
-                .IsRequired(false);
+            builder.OwnsOne(x => x.Cpf,
+                navigationBuilder =>
+                {
+                    navigationBuilder
+                        .Property(cpf => cpf.Numero)
+                        .HasColumnName("Cpf")
+                        .HasMaxLength(11)
+                        .IsRequired();
+
+                    navigationBuilder
+                        .HasIndex(cpf => cpf.Numero)
+                        .IsUnique();
+                });
 
             builder.Ignore(x => x.DomainEvents);
 

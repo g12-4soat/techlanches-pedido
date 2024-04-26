@@ -4,6 +4,8 @@ using TechLanches.Adapter.API.Constantes;
 using Swashbuckle.AspNetCore.Annotations;
 using TechLanches.Application.DTOs;
 using TechLanches.Application.Controllers.Interfaces;
+using TechLanches.Domain.ValueObjects;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace TechLanches.Adapter.API.Endpoints
 {
@@ -22,21 +24,68 @@ namespace TechLanches.Adapter.API.Endpoints
         }
 
         public static async Task<IResult> Checkout(
-            int pedidoId,
-            [FromServices] ICheckoutController checkoutController)
+            [FromBody] PedidoRequestDTO pedidoDto,
+            [FromServices] IPedidoController pedidoController,
+            [FromServices] IProdutoController produtoController,
+            [FromServices] ICheckoutController checkoutController,
+            [FromHeader(Name = "x-id-token")] string cognitoIdToken//TODO pegar cpf do bearer token
+            )
         {
-            var checkout = await checkoutController.ValidarCheckout(pedidoId);
+            if (pedidoDto.ItensPedido.Count == 0)
+                return Results.BadRequest(MensagensConstantes.SEM_NENHUM_ITEM_PEDIDO);
+
+            var decodedToken = ValidarToken(cognitoIdToken);
+
+            if (decodedToken is null)
+            {
+                return Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Id Token nulo ou inválido.", StatusCode = HttpStatusCode.BadRequest });
+            }
+
+            UserTokenDTO userTokenDto = GerUserTokenDto(decodedToken);
+
+            var itensPedido = new List<ItemPedido>();
+
+            foreach (var itemPedido in pedidoDto.ItensPedido)
+            {
+                var dadosProduto = await produtoController.BuscarPorId(itemPedido.IdProduto);
+                var itemPedidoCompleto = new ItemPedido(dadosProduto.Id, itemPedido.Quantidade, dadosProduto.Preco);
+
+                itensPedido.Add(itemPedidoCompleto);
+            }
+
+            var novoPedido = await pedidoController.Cadastrar(userTokenDto, itensPedido);
+
+            var checkoutValido = await checkoutController.ValidarCheckout(novoPedido.Id);
 
             var qrdCodeData = new CheckoutResponseDTO();
 
-            if (checkout is true)
-                qrdCodeData = await checkoutController.CriarPagamentoCheckout(pedidoId);
+            if (checkoutValido)
+                qrdCodeData = await checkoutController.GerarPagamentoCheckout(novoPedido.Id);
 
-            return checkout is false ?
-                   Results.BadRequest(new ErrorResponseDTO { MensagemErro = $"Falha ao realizar checkout.", StatusCode = HttpStatusCode.BadRequest }) :
-                   qrdCodeData.QRCodeImage.Length > 0 ?
-                   Results.File(qrdCodeData.QRCodeImage, "image/png") :
-                   Results.Ok(qrdCodeData);
+            return Results.Ok(qrdCodeData);
+        }
+
+        private static UserTokenDTO GerUserTokenDto(JwtSecurityToken decodedToken)
+        {
+            return new UserTokenDTO
+            {
+                Username = decodedToken.Payload["cognito:username"].ToString(),
+                Email = decodedToken.Payload["email"].ToString(),
+                Nome = decodedToken.Payload["name"].ToString(),
+            };
+        }
+
+        private static JwtSecurityToken? ValidarToken(string stringToken)
+        {
+            try
+            {
+                var decodedToken = new JwtSecurityToken(stringToken);
+                return decodedToken;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

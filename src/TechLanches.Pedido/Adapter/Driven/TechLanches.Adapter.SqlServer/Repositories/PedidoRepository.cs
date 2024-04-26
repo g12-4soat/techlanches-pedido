@@ -20,7 +20,6 @@ public class PedidoRepository : IPedidoRepository
     public async Task<List<Pedido>> BuscarTodos()
        => await _context.Pedidos.Include(x => x.ItensPedido)
                                 .ThenInclude(i => i.Produto)
-                                .Include(x => x.Cliente)
                                 .Where(x => x.StatusPedido != StatusPedido.PedidoFinalizado)
                                 .OrderBy(x => x.Id)
                                 .ThenBy(x => x.StatusPedido == StatusPedido.PedidoPronto)
@@ -31,14 +30,11 @@ public class PedidoRepository : IPedidoRepository
     public async Task<Pedido> BuscarPorId(int idPedido)
         => await _context.Pedidos.Include(x => x.ItensPedido)
                                  .ThenInclude(i => i.Produto)
-                                 .Include(x => x.Cliente)
-                                 .Include(x => x.Pagamentos)
                                  .SingleOrDefaultAsync(x => x.Id == idPedido);
 
     public async Task<List<Pedido>> BuscarPorStatus(StatusPedido statusPedido)
         => await _context.Pedidos.Include(x => x.ItensPedido)
                                  .ThenInclude(i => i.Produto)
-                                 .Include(x => x.Cliente)
                                  .Where(x => x.StatusPedido == statusPedido)
                                  .OrderBy(x => x.Id)
                                  .ToListAsync();

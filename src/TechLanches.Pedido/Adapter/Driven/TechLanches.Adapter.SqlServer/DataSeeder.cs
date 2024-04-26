@@ -1,4 +1,5 @@
 ﻿using TechLanches.Domain.Aggregates;
+using TechLanches.Domain.Constantes;
 using TechLanches.Domain.Entities;
 using TechLanches.Domain.Enums;
 using TechLanches.Domain.ValueObjects;
@@ -38,7 +39,7 @@ namespace TechLanches.Adapter.SqlServer
                 var produto2 = context.Produtos.Find(2);
                 var pedidos = new List<Pedido>
                 {
-                    new (1, new List<ItemPedido> { new (produto1!.Id, 1, produto1.Preco), new (produto2!.Id, 2, produto2.Preco) })
+                    new (new Cpf(Constants.CPF_USER_DEFAULT), new List<ItemPedido> { new (produto1!.Id, 1, produto1.Preco), new (produto2!.Id, 2, produto2.Preco) })
                 };
 
                 context.AddRange(pedidos);

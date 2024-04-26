@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using System.Reflection;
 using TechLanches.Adapter.ACL.Pagamento.QrCode.DTOs;
-using TechLanches.Adapter.API.Constantes;
 using TechLanches.Application.DTOs;
 using TechLanches.Domain.Aggregates;
 using TechLanches.Domain.Entities;
@@ -21,8 +20,7 @@ namespace TechLanches.Adapter.API.Configuration
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             TypeAdapterConfig<Pedido, PedidoResponseDTO>.NewConfig()
-                .Map(dest => dest.NomeStatusPedido, src => src.StatusPedido.ToString())
-                .Map(dest => dest.NomeCliente, src => src.Cliente == null ? MensagensConstantes.CLIENTE_NAO_IDENTIFICADO : src.Cliente.Nome);
+                .Map(dest => dest.NomeStatusPedido, src => src.StatusPedido.ToString());
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 #pragma warning restore CS8604 // Possible null reference argument.
 

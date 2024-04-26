@@ -10,9 +10,9 @@ namespace TechLanches.Domain.Aggregates
     {
         private Pedido() { }
 
-        public Pedido(int? clienteId, List<ItemPedido> itensPedido)
+        public Pedido(Cpf cpf, List<ItemPedido> itensPedido)
         {
-            ClienteId = clienteId;
+            Cpf = cpf;
             StatusPedido = StatusPedido.PedidoCriado;
             _itensPedido = new List<ItemPedido>();
             AdicionarItensPedidos(itensPedido);
@@ -21,13 +21,9 @@ namespace TechLanches.Domain.Aggregates
 
         private readonly List<ItemPedido> _itensPedido;
         public IReadOnlyCollection<ItemPedido> ItensPedido => _itensPedido;
-        public int? ClienteId { get; private set; }
+        public Cpf Cpf { get; private set; }
         public decimal Valor { get; private set; }
         public StatusPedido StatusPedido { get; private set; }
-        public Cliente? Cliente { get; private set; }
-        public bool ClienteIdentificado => ClienteId.HasValue;
-
-        public IReadOnlyCollection<Pagamento> Pagamentos { get; private set; }
 
         private void AdicionarItensPedidos(List<ItemPedido> itensPedido)
         {
@@ -58,6 +54,7 @@ namespace TechLanches.Domain.Aggregates
         private void Validar()
         {
             ArgumentNullException.ThrowIfNull(_itensPedido);
+
             if (!_itensPedido.Any())
                 throw new DomainException("O pedido deve possuir pelo menos um item.");
 

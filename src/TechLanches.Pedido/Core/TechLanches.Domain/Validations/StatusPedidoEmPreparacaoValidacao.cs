@@ -6,6 +6,6 @@ namespace TechLanches.Domain.Validations
     {
         public StatusPedido StatusPedido => StatusPedido.PedidoEmPreparacao;
 
-        public bool Validar(StatusPedido statusPedido) => statusPedido == StatusPedido.PedidoRecebido;
+        public bool Validar(StatusPedido statusPedido) => statusPedido == StatusPedido.PedidoRecebido || statusPedido == StatusPedido.PedidoEmPreparacao;
     }
 }

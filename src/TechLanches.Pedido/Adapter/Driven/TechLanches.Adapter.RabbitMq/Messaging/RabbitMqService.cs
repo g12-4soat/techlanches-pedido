@@ -38,7 +38,8 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
                 try
                 {
                     var body = ea.Body.ToArray();
-                    await function(Encoding.UTF8.GetString(body));
+                    var message = Encoding.UTF8.GetString(body);
+                    await function(message);
                 }
                 catch (Exception ex)
                 {
@@ -53,9 +54,9 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
             _channel.BasicConsume(queue: _rabbitOptions.Queue, autoAck: false, consumer: consumer);
         }
 
-        public void Publicar(int data)
+        public void Publicar(IBaseMessage baseMessage)
         {
-            var mensagem = Encoding.UTF8.GetBytes(data.ToString());
+            var mensagem = Encoding.UTF8.GetBytes(baseMessage.GetMessage());
 
             var properties = _channel.CreateBasicProperties();
             properties.DeliveryMode = 2; // Marca a mensagem como persistente

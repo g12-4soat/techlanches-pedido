@@ -1,4 +1,6 @@
-﻿using TechLanches.Application.DTOs;
+﻿using System;
+using TechLanches.Domain.Constantes;
+using TechLanches.Application.DTOs;
 using TechLanches.Application.Gateways.Interfaces;
 using TechLanches.Core;
 using TechLanches.Domain.Aggregates;
@@ -12,11 +14,8 @@ namespace TechLanches.Application.UseCases.Pedidos
     {
         public static async Task<Pedido> Cadastrar(UserTokenDTO user, List<ItemPedido> itensPedido, IPedidoGateway pedidoGateway)
         {
-            //validar no cognito?
-            //var cliente = await ClienteUseCases.IdentificarCliente(user);
-            //TODO trocar pedido para usar cpf
-            var clienteId = user.Username == "usertechlanches" ? 0 : Convert.ToInt32(user.Username);
-            var pedido = new Pedido(clienteId, itensPedido);
+            var cpf = RetornarCpf(user);
+            var pedido = new Pedido(cpf, itensPedido);
 
             pedido = await pedidoGateway.Cadastrar(pedido);
             return pedido;
@@ -34,6 +33,13 @@ namespace TechLanches.Application.UseCases.Pedidos
             pedido.TrocarStatus(statusPedidoValidacaoService, statusPedido);
 
             return pedido;
+        }
+
+        private static Cpf RetornarCpf(UserTokenDTO user)
+        {
+            var cpf = user.Username == Constants.USER_DEFAULT ? Constants.CPF_USER_DEFAULT : user.Username;
+
+            return new Cpf(cpf);
         }
     }
 }
