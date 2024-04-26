@@ -2,7 +2,7 @@
 {
     public interface IBaseMessage
     {
-        Type Type { get; }
+        string Type { get; }
         string GetMessage();
     }
 }

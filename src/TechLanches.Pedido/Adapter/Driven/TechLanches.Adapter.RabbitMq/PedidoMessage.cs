@@ -7,7 +7,7 @@ namespace TechLanches.Adapter.RabbitMq
         public int Id { get; private set; }
         public string Cpf { get; private set; }
 
-        public Type Type => typeof(PedidoMessage);
+        public string Type => nameof(PedidoMessage);
 
         public PedidoMessage(int id, string cpf)
         {
