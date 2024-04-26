@@ -51,7 +51,6 @@ builder.Services.AddDatabaseConfiguration();
 builder.Services.RegisterMaps();
 
 builder.Services.Configure<RabbitOptions>(builder.Configuration.GetSection("RabbitMQ"));
-builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("ApiMercadoPago"));
 
 //Setting healthcheck
 builder.Services.AddHealthCheckConfig(builder.Configuration);
@@ -61,11 +60,9 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
                   .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
 //Registrar httpclient
-builder.Services.AddHttpClient("MercadoPago", httpClient =>
+builder.Services.AddHttpClient("Pagamentos", httpClient =>
 {
-    httpClient.DefaultRequestHeaders.Authorization =
-        new AuthenticationHeaderValue("Bearer", builder.Configuration.GetSection($"ApiMercadoPago:AccessToken").Value);
-    httpClient.BaseAddress = new Uri(builder.Configuration.GetSection($"ApiMercadoPago:BaseUrl").Value);
+    httpClient.BaseAddress = new Uri(builder.Configuration.GetSection($"Pagamentos:BaseUrl").Value);
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
@@ -83,7 +80,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.UseSwaggerConfiguration();
 

@@ -28,7 +28,6 @@ namespace TechLanches.Adapter.API.Configuration
 
             services.AddSingleton<IProdutoPresenter, ProdutoPresenter>();
             services.AddSingleton<IPedidoPresenter, PedidoPresenter>();
-            services.AddSingleton<ICheckoutPresenter, CheckoutPresenter>();
 
             services.AddScoped<IProdutoController, ProdutoController>();
             services.AddScoped<IPedidoController, PedidoController>();
