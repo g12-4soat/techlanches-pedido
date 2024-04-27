@@ -104,7 +104,7 @@ jobs:
   publish-image-dh:
     #needs: build-sonar
     needs: [
-        build-and-test
+      build-and-test
     ]
 
     runs-on: ubuntu-latest
