@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Adapter.AWS.Sec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Adapter.RabbitMq", "Adapter\Driven\TechLanches.Adapter.RabbitMq\TechLanches.Adapter.RabbitMq.csproj", "{BB08F17E-29D5-4A64-AB23-2B5F0C143775}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechLanches.Pedido.API", "TechLanches.Pedido.API\TechLanches.Pedido.API.csproj", "{041B22A4-D460-4C1C-AE3A-065361473C02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Pedido.API", "TechLanches.Pedido.API\TechLanches.Pedido.API.csproj", "{041B22A4-D460-4C1C-AE3A-065361473C02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.UnitTests", "..\..\test\TechLanches.UnitTests\TechLanches.UnitTests.csproj", "{CCDE3ED0-222B-4F80-8414-2D61F03913D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{041B22A4-D460-4C1C-AE3A-065361473C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{041B22A4-D460-4C1C-AE3A-065361473C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{041B22A4-D460-4C1C-AE3A-065361473C02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCDE3ED0-222B-4F80-8414-2D61F03913D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCDE3ED0-222B-4F80-8414-2D61F03913D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCDE3ED0-222B-4F80-8414-2D61F03913D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCDE3ED0-222B-4F80-8414-2D61F03913D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
