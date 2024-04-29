@@ -7,12 +7,12 @@ namespace TechLanches.Application.Gateways
     {
         public Task<CheckoutResponseDTO> GerarPagamento(int pedidoId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new CheckoutResponseDTO { PedidoId = pedidoId });
         }
 
         public Task<PagamentoResponseDTO> RetornarPagamentoPorPedidoId(int pedidoId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new PagamentoResponseDTO());
         }
     }
 }

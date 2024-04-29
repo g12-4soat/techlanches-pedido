@@ -2,6 +2,8 @@
 using TechLanches.Adapter.SqlServer.Repositories;
 using TechLanches.Application.Controllers;
 using TechLanches.Application.Controllers.Interfaces;
+using TechLanches.Application.Gateways;
+using TechLanches.Application.Gateways.Interfaces;
 using TechLanches.Application.Ports.Repositories;
 using TechLanches.Application.Presenters;
 using TechLanches.Application.Presenters.Interfaces;
@@ -25,6 +27,8 @@ namespace TechLanches.Adapter.API.Configuration
             services.AddScoped<IStatusPedidoValidacao, StatusPedidoProntoValidacao>();
             services.AddScoped<IStatusPedidoValidacao, StatusPedidoRecebidoValidacao>();
             services.AddScoped<IStatusPedidoValidacao, StatusPedidoRetiradoValidacao>();
+
+            services.AddScoped<IPagamentoGateway, PagamentoGateway>();
 
             services.AddSingleton<IProdutoPresenter, ProdutoPresenter>();
             services.AddSingleton<IPedidoPresenter, PedidoPresenter>();

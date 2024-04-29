@@ -34,9 +34,7 @@ namespace TechLanches.Adapter.SqlServer.EntityTypeConfigurations
                         .HasMaxLength(11)
                         .IsRequired();
 
-                    navigationBuilder
-                        .HasIndex(cpf => cpf.Numero)
-                        .IsUnique();
+                    navigationBuilder.HasIndex("PedidoId", "Numero").IsUnique();
                 });
 
             builder.Ignore(x => x.DomainEvents);

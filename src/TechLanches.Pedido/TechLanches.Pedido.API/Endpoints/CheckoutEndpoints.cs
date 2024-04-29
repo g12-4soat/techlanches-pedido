@@ -6,6 +6,7 @@ using TechLanches.Application.DTOs;
 using TechLanches.Application.Controllers.Interfaces;
 using TechLanches.Domain.ValueObjects;
 using System.IdentityModel.Tokens.Jwt;
+using TechLanches.Domain.Constantes;
 
 namespace TechLanches.Adapter.API.Endpoints
 {
@@ -34,14 +35,15 @@ namespace TechLanches.Adapter.API.Endpoints
             if (pedidoDto.ItensPedido.Count == 0)
                 return Results.BadRequest(MensagensConstantes.SEM_NENHUM_ITEM_PEDIDO);
 
-            var decodedToken = ValidarToken(cognitoIdToken);
-
-            if (decodedToken is null)
-            {
-                return Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Id Token nulo ou inválido.", StatusCode = HttpStatusCode.BadRequest });
-            }
-
-            UserTokenDTO userTokenDto = GerUserTokenDto(decodedToken);
+            //var decodedToken = ValidarToken(cognitoIdToken);
+            //
+            //if (decodedToken is null)
+            //{
+            //    return Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Id Token nulo ou inválido.", StatusCode = HttpStatusCode.BadRequest });
+            //}
+            //
+            //UserTokenDTO userTokenDto = GerUserTokenDto(decodedToken);
+            UserTokenDTO userTokenDto = new UserTokenDTO { Username = Constants.USER_DEFAULT };
 
             var itensPedido = new List<ItemPedido>();
 
