@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TechLanches.Pedido\Core\TechLanches.Domain\TechLanches.Domain.csproj" />
-    <ProjectReference Include="..\..\src\TechLanches.Pedido\Core\TechLanches.Application\TechLanches.Application.csproj" />
     <ProjectReference Include="..\..\src\TechLanches.Pedido\Core\TechLanches.Core\TechLanches.Core.csproj" />
   </ItemGroup>
 
