@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using System.Reflection;
-using TechLanches.Adapter.ACL.Pagamento.QrCode.DTOs;
 using TechLanches.Application.DTOs;
 using TechLanches.Domain.Aggregates;
 using TechLanches.Domain.Entities;
@@ -23,11 +22,6 @@ namespace TechLanches.Adapter.API.Configuration
                 .Map(dest => dest.NomeStatusPedido, src => src.StatusPedido.ToString());
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 #pragma warning restore CS8604 // Possible null reference argument.
-
-            TypeAdapterConfig<Pedido, PedidoACLDTO>.NewConfig();
-
-            TypeAdapterConfig<ItemPedido, ItemPedidoACLDTO>.NewConfig()
-               .Map(dest => dest.NomeProduto, src => src.Produto.Nome);
 
             TypeAdapterConfig<ItemPedido, ItemPedidoResponseDTO>.NewConfig()
                 .Map(dest => dest.Produto.Nome, src => src.Produto.Nome);

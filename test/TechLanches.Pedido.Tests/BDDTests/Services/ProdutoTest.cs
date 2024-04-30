@@ -1,6 +1,4 @@
-﻿using TechLanches.Application.DTOs;
-
-namespace TechLanches.Pedido.Tests.BDDTests.Services
+﻿namespace TechLanchesPedido.Tests.BDDTests.Services
 {
     [Trait("Services", "Produto")]
     public class ProdutoTest

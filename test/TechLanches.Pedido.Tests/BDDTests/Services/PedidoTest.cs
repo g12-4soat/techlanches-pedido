@@ -4,7 +4,7 @@
 //using TechLanches.Application.Presenters;
 //using TechLanches.UnitTests.Fixtures;
 
-//namespace TechLanches.Pedido.Tests.BDDTests.Services
+//namespace TechLanchesPedido.Tests.BDDTests.Services
 //{
 //    [Trait("Services", "Pedido")]
 //    public class PedidoTest : IClassFixture<PedidoFixture>

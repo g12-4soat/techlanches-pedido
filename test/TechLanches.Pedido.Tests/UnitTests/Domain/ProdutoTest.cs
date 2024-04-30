@@ -1,4 +1,4 @@
-﻿namespace TechLanches.Pedido.Tests.UnitTests.Domain
+﻿namespace TechLanchesPedido.Tests.UnitTests.Domain
 {
     [Trait("Domain", "ProdutoTest")]
     public class ProdutoTest

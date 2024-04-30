@@ -3,7 +3,7 @@ using TechLanches.Domain.Services;
 using TechLanches.Domain.Validations;
 using TechLanches.Domain.ValueObjects;
 
-namespace TechLanches.Pedido.Tests.UnitTests.Fixtures
+namespace TechLanchesPedido.Tests.UnitTests.Fixtures
 {
     public class PedidoFixture : IDisposable
     {

@@ -1,6 +1,6 @@
-﻿using TechLanches.Pedido.Tests.UnitTests.Fixtures;
+﻿using TechLanchesPedido.Tests.UnitTests.Fixtures;
 
-namespace TechLanches.Pedido.Tests.UnitTests.Domain
+namespace TechLanchesPedido.Tests.UnitTests.Domain
 {
     [Trait("Domain", "Pedido")]
     public class PedidoTest : IClassFixture<PedidoFixture>
