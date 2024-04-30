@@ -4,9 +4,7 @@ using TechLanches.Adapter.API.Constantes;
 using Swashbuckle.AspNetCore.Annotations;
 using TechLanches.Application.DTOs;
 using TechLanches.Domain.Enums;
-using TechLanches.Domain.ValueObjects;
 using TechLanches.Application.Controllers.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace TechLanches.Adapter.API.Endpoints;
 
@@ -115,7 +113,7 @@ public static class PedidoEndpoints
             .Select(x => new StatusPedidoResponseDTO { Id = (int)x, Nome = x.ToString() })
             .ToList();
 
-        return statusPedidos is not null
+        return statusPedidos is not null && statusPedidos.Count > 0
             ? Results.Ok(await Task.FromResult(statusPedidos))
             : Results.NotFound(new ErrorResponseDTO { MensagemErro = "Nenhum status encontrado.", StatusCode = HttpStatusCode.NotFound });
     }
