@@ -60,7 +60,7 @@ namespace TechLanches.Domain.ValueObjects
 
         private static string LimparCpf(string cpf)
         {
-            return Regex.Replace(cpf, @"[^\d]", "");
+            return Regex.Replace(cpf, @"[^\d]", "", RegexOptions.None, TimeSpan.FromSeconds(30));
         }
 
         protected override IEnumerable<object> RetornarPropriedadesDeEquidade()
