@@ -39,7 +39,7 @@ namespace TechLanches.Adapter.SqlServer.EntityTypeConfigurations
                     navigationBuilder.Ignore(categoria => categoria.Nome);
                 });
 
-            builder.Ignore(x => x.DomainEvents);
+            //builder.Ignore(x => x.DomainEvents);
 
             builder.HasQueryFilter(b => !b.Deletado);
         }

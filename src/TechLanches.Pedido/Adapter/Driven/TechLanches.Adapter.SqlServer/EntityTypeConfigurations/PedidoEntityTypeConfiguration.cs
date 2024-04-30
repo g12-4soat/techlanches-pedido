@@ -37,7 +37,7 @@ namespace TechLanches.Adapter.SqlServer.EntityTypeConfigurations
                     navigationBuilder.HasIndex("PedidoId", "Numero").IsUnique();
                 });
 
-            builder.Ignore(x => x.DomainEvents);
+            //builder.Ignore(x => x.DomainEvents);
 
             var navigation = builder.Metadata.FindNavigation(nameof(Pedido.ItensPedido));
             navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
