@@ -14,24 +14,24 @@
 
         public int Id { get; private set; }
 
-        private List<DomainEvent> _domainEvents;
-        public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
+        //private List<DomainEvent> _domainEvents;
+        //public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
 
-        public void AdicionarEventoDominio(DomainEvent domainEvent)
-        {
-            _domainEvents ??= new List<DomainEvent>();
-            _domainEvents.Add(domainEvent);
-        }
+        //public void AdicionarEventoDominio(DomainEvent domainEvent)
+        //{
+        //    _domainEvents ??= new List<DomainEvent>();
+        //    _domainEvents.Add(domainEvent);
+        //}
 
-        public void RemoverEventoDominio(DomainEvent domainEvent)
-        {
-            _domainEvents?.Remove(domainEvent);
-        }
+        //public void RemoverEventoDominio(DomainEvent domainEvent)
+        //{
+        //    _domainEvents?.Remove(domainEvent);
+        //}
 
-        public void LimparEventoDominio()
-        {
-            _domainEvents?.Clear();
-        }
+        //public void LimparEventoDominio()
+        //{
+        //    _domainEvents?.Clear();
+        //}
 
         public override bool Equals(object obj)
         {
