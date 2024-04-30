@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Core", "Core\TechLanches.Core\TechLanches.Core.csproj", "{358142F4-B269-49D0-B77C-43B5443367CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Domain", "Core\TechLanches.Domain\TechLanches.Domain.csproj", "{09D940EB-8653-4866-86FC-F8BCFE0F6F72}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Application", "Core\TechLanches.Application\TechLanches.Application.csproj", "{9FBB3345-53DB-412D-9A8C-A7D15169ED18}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Adapter.SqlServer", "Adapter\Driven\TechLanches.Adapter.SqlServer\TechLanches.Adapter.SqlServer.csproj", "{D1BB15F9-988A-4C37-9AEA-207644A40EE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Adapter.AWS.SecretsManager", "Adapter\Driven\TechLanches.Adapter.AWS.SecretsManager\TechLanches.Adapter.AWS.SecretsManager.csproj", "{B7FE31AD-014A-4C3A-9237-64AFF8358C22}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Adapter.RabbitMq", "Adapter\Driven\TechLanches.Adapter.RabbitMq\TechLanches.Adapter.RabbitMq.csproj", "{BB08F17E-29D5-4A64-AB23-2B5F0C143775}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Pedido.API", "TechLanches.Pedido.API\TechLanches.Pedido.API.csproj", "{041B22A4-D460-4C1C-AE3A-065361473C02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A1C7BBF7-7A64-47E2-B593-E70EBBCD315A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapter", "Adapter", "{2AA2A9D0-6F68-46E4-8ACC-CD573CB4C29F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F273F593-7F4D-4DC2-83B5-6975864092D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechLanches.Pedido.Tests", "..\..\test\TechLanches.Pedido.Tests\TechLanches.Pedido.Tests.csproj", "{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{358142F4-B269-49D0-B77C-43B5443367CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{358142F4-B269-49D0-B77C-43B5443367CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{358142F4-B269-49D0-B77C-43B5443367CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{358142F4-B269-49D0-B77C-43B5443367CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09D940EB-8653-4866-86FC-F8BCFE0F6F72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09D940EB-8653-4866-86FC-F8BCFE0F6F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09D940EB-8653-4866-86FC-F8BCFE0F6F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09D940EB-8653-4866-86FC-F8BCFE0F6F72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FBB3345-53DB-412D-9A8C-A7D15169ED18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FBB3345-53DB-412D-9A8C-A7D15169ED18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FBB3345-53DB-412D-9A8C-A7D15169ED18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FBB3345-53DB-412D-9A8C-A7D15169ED18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1BB15F9-988A-4C37-9AEA-207644A40EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1BB15F9-988A-4C37-9AEA-207644A40EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1BB15F9-988A-4C37-9AEA-207644A40EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1BB15F9-988A-4C37-9AEA-207644A40EE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7FE31AD-014A-4C3A-9237-64AFF8358C22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7FE31AD-014A-4C3A-9237-64AFF8358C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7FE31AD-014A-4C3A-9237-64AFF8358C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7FE31AD-014A-4C3A-9237-64AFF8358C22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB08F17E-29D5-4A64-AB23-2B5F0C143775}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB08F17E-29D5-4A64-AB23-2B5F0C143775}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB08F17E-29D5-4A64-AB23-2B5F0C143775}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB08F17E-29D5-4A64-AB23-2B5F0C143775}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041B22A4-D460-4C1C-AE3A-065361473C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041B22A4-D460-4C1C-AE3A-065361473C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041B22A4-D460-4C1C-AE3A-065361473C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041B22A4-D460-4C1C-AE3A-065361473C02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{358142F4-B269-49D0-B77C-43B5443367CB} = {F273F593-7F4D-4DC2-83B5-6975864092D2}
+		{09D940EB-8653-4866-86FC-F8BCFE0F6F72} = {F273F593-7F4D-4DC2-83B5-6975864092D2}
+		{9FBB3345-53DB-412D-9A8C-A7D15169ED18} = {F273F593-7F4D-4DC2-83B5-6975864092D2}
+		{D1BB15F9-988A-4C37-9AEA-207644A40EE4} = {2AA2A9D0-6F68-46E4-8ACC-CD573CB4C29F}
+		{B7FE31AD-014A-4C3A-9237-64AFF8358C22} = {2AA2A9D0-6F68-46E4-8ACC-CD573CB4C29F}
+		{BB08F17E-29D5-4A64-AB23-2B5F0C143775} = {2AA2A9D0-6F68-46E4-8ACC-CD573CB4C29F}
+		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2} = {A1C7BBF7-7A64-47E2-B593-E70EBBCD315A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D4AED2D-F0EE-42DC-BD17-DD4C7237ABE0}
+	EndGlobalSection
+EndGlobal
