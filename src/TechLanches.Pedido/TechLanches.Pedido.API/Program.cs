@@ -9,6 +9,7 @@ using TechLanches.Adapter.AWS.SecretsManager;
 using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
 using TechLanches.Application;
+using TechLanches.Application.Constantes;
 using TechLanches.Application.Options;
 using TechLanches.Pedido.API.Middlewares;
 
@@ -61,7 +62,7 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
                   .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
 //Registrar httpclient
-builder.Services.AddHttpClient("Pagamentos", httpClient =>
+builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration.GetSection($"Pagamentos:BaseUrl").Value);
 }).AddPolicyHandler(retryPolicy);
