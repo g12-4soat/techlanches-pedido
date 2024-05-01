@@ -10,6 +10,7 @@ using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
 using TechLanches.Application;
 using TechLanches.Application.Options;
+using TechLanches.Pedido.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +78,8 @@ if (app.Environment.IsDevelopment())
 
 }
 app.UseRouting();
+
+app.UseMiddleware<JwtTokenMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
