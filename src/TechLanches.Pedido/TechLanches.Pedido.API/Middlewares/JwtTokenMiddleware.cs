@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using TechLanches.Adapter.AWS.SecretsManager;
 using System.Net;
 
-namespace TechLanches.Pedido.API.Middlewares
+namespace TechLanchesPedido.API.Middlewares
 {
     public class JwtTokenMiddleware : IMiddleware
     {
