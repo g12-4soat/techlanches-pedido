@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Polly;
 using Polly.Extensions.Http;
-using System.Net.Http.Headers;
 using TechLanches.Adapter.API.Configuration;
 using TechLanches.Adapter.API.Options;
 using TechLanches.Adapter.AWS.SecretsManager;
@@ -10,8 +7,7 @@ using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
 using TechLanches.Application;
 using TechLanches.Application.Constantes;
-using TechLanches.Application.Options;
-using TechLanches.Pedido.API.Middlewares;
+using TechLanchesPedido.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
