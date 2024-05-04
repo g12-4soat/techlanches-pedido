@@ -27,7 +27,7 @@ namespace TechLanches.Application.UseCases.Pagamentos
         {
             var pagamento = await pagamentoGateway.RetornarPagamentoPorPedidoId(pedidoId);
 
-            return pagamento is not null && pagamento.Id != 0;
+            return pagamento is not null && pagamento.PedidoId != 0;
         }
     }
 }

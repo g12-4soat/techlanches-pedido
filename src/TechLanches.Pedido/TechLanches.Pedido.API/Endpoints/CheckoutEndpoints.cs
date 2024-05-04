@@ -59,10 +59,10 @@ namespace TechLanches.Adapter.API.Endpoints
 
             var checkoutValido = await checkoutController.ValidarCheckout(novoPedido.Id);
 
-            var qrdCodeData = new CheckoutResponseDTO();
+            var qrdCodeData = new PagamentoResponseDTO();
 
             if (checkoutValido)
-                qrdCodeData = await checkoutController.GerarPagamentoCheckout(novoPedido.Id);
+                qrdCodeData = await checkoutController.GerarPagamentoCheckout(novoPedido.Id, novoPedido.Valor);
 
             return Results.Ok(qrdCodeData);
         }

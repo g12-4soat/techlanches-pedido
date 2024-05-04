@@ -23,9 +23,11 @@ namespace TechLanches.Application.Controllers
         public async Task<bool> ValidarCheckout(int pedidoId)
             => await CheckoutUseCase.ValidarPedidoCompleto(pedidoId, _pedidoGateway, _pagamentoGateway);
 
-        public async Task<CheckoutResponseDTO> GerarPagamentoCheckout(int pedidoId)
-        {            
-            return await _pagamentoGateway.GerarPagamento(pedidoId);
+        public async Task<PagamentoResponseDTO> GerarPagamentoCheckout(int pedidoId, decimal valor)
+        {
+            var dto = new PagamentoRequestDTO { PedidoId = pedidoId, Valor = valor };
+
+            return await _pagamentoGateway.GerarPagamento(dto);
         }
     }
 }

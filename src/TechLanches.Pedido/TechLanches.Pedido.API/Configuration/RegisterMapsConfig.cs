@@ -2,7 +2,6 @@
 using System.Reflection;
 using TechLanches.Application.DTOs;
 using TechLanches.Domain.Aggregates;
-using TechLanches.Domain.Entities;
 using TechLanches.Domain.ValueObjects;
 
 namespace TechLanches.Adapter.API.Configuration
@@ -27,7 +26,6 @@ namespace TechLanches.Adapter.API.Configuration
                 .Map(dest => dest.Produto.Nome, src => src.Produto.Nome);
 
             TypeAdapterConfig<Pagamento, PagamentoResponseDTO>.NewConfig()
-                .Map(dest => dest.Id, src => src.PedidoId)
                 .Map(dest => dest.StatusPagamento, src => src.StatusPagamento.ToString());
 
             TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());

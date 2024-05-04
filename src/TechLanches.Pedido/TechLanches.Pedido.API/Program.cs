@@ -1,15 +1,13 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Polly;
 using Polly.Extensions.Http;
-using System.Net.Http.Headers;
 using TechLanches.Adapter.API.Configuration;
 using TechLanches.Adapter.API.Options;
 using TechLanches.Adapter.AWS.SecretsManager;
 using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
 using TechLanches.Application;
-using TechLanches.Application.Options;
+using TechLanches.Application.Constantes;
+using TechLanchesPedido.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +58,7 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
                   .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
 //Registrar httpclient
-builder.Services.AddHttpClient("Pagamentos", httpClient =>
+builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration.GetSection($"Pagamentos:BaseUrl").Value);
 }).AddPolicyHandler(retryPolicy);
@@ -77,6 +75,8 @@ if (app.Environment.IsDevelopment())
 
 }
 app.UseRouting();
+
+app.UseMiddleware<JwtTokenMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
