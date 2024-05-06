@@ -1,5 +1,4 @@
 ﻿using TechLanches.Core;
-using TechLanches.Domain.Entities;
 using TechLanches.Domain.Enums;
 using TechLanches.Domain.Services;
 using TechLanches.Domain.ValueObjects;
