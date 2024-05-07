@@ -4,7 +4,13 @@
     public class ProdutoTest
     {
         private Produto _produto;
-        private ProdutoResponseDTO _novoProdutoDto;
+        private List<Produto> _produtos;
+        private List<ProdutoResponseDTO> _produtosResponseDto;
+        private CategoriaProduto _categoriaProduto;
+        private ProdutoResponseDTO _produtoResponseDto;
+        private ProdutoController _produtoController;
+        private IProdutoRepository _produtoRepository;
+        private IUnitOfWork _unitOfWork;
 
         [Fact(DisplayName = "Deve cadastrar produto com sucesso")]
         public async Task CadastrarProduto_DeveRetornarSucesso()
@@ -12,109 +18,58 @@
             Given_ProdutoComDadosValidos();
             await When_CadastrarProduto();
             await When_CadastrarProduto();
-            Then_ProdutoCriadoNaoDeveSerNulo();
+            Then_ProdutoDtoCriadoNaoDeveSerNulo();
             Then_TodosAsPropriedadesDevemSerIguais();
         }
 
-        //[Fact(DisplayName = "Deve atualizar produto com sucesso")]
-        //public async Task AtualizarProduto_DeveRetornarSucesso()
-        //{
-        //    // Arrange
-        //    var produto = new Produto("Novo Nome", "Nova Descrição", 20, 2);
-        //    var produtoRepository = Substitute.For<IProdutoRepository>();
-        //    var unitOfWork = Substitute.For<IUnitOfWork>();
-        //    produtoRepository.UnitOfWork.Returns(unitOfWork);
-        //    produtoRepository.BuscarPorId(Arg.Any<int>()).Returns(produto);
-        //    var produtoController = new ProdutoController(produtoRepository, new ProdutoPresenter());
+        [Fact(DisplayName = "Deve atualizar produto com sucesso")]
+        public async Task AtualizarProduto_DeveRetornarSucesso()
+        {
+            Given_ProdutoComDadosValidos();
+            await When_AtualizarProduto();
+            await Then_DeveRealizarCommit();
+        }
 
-        //    // Act
-        //    await produtoController.Atualizar(0, "Novo Nome", "Nova Descrição", 20, 2);
+        [Fact(DisplayName = "Deve buscar produtos por categoria com sucesso")]
+        public async Task BuscarProdutosPorCategoria_DeveRetornarProdutosComCategoriaSolicitada()
+        {
+            Given_CategoriaProdutoValida();
+            await When_BuscarProdutosPorCategoria();
+            Then_ListaProdutoDtoNaoDeveSerNula();
+        }
 
-        //    // Assert
-        //    await unitOfWork.Received(1).CommitAsync();
-        //}
+        [Fact(DisplayName = "Deve buscar produto por id com sucesso")]
+        public async Task BuscarPorId_DeveRetornarProdutoSolicitado()
+        {
+            Given_ProdutoComDadosValidos();
+            await When_BuscarProdutoPorId();
+            Then_ProdutoNaoDeveSerNulo();
+            await Then_DeveTerMesmoNomeCadastrado();
+        }
 
-        //[Fact(DisplayName = "Deve buscar produtos por categoria com sucesso")]
-        //public async Task BuscarPorCategoria_DeveRetornarProdutosComCategoriaSolicitada()
-        //{
-        //    // Arrange
-        //    var produtoRepository = Substitute.For<IProdutoRepository>();
-        //    var unitOfWork = Substitute.For<IUnitOfWork>();
-        //    produtoRepository.UnitOfWork.Returns(unitOfWork);
-        //    produtoRepository.BuscarPorCategoria(new CategoriaProduto(1, "teste")).Returns(new List<Produto> { new ("Nome", "Descrição do produto", 20.0m, 2) });
+        [Fact(DisplayName = "Deve buscar todos produtos com sucesso")]
+        public async Task BuscarTodos_DeveRetornarTodosProdutos()
+        {
+            Given_ListaDeProdutosValida();
+            await When_BuscarTodosProdutos();
+            Then_ListaProdutoDtoNaoDeveSerNula();
+        }
 
-        //    var produtoController = new ProdutoController(produtoRepository, new ProdutoPresenter());
+        [Fact(DisplayName = "Deve deletar o produto com sucesso")]
+        public async Task Deletar_ProdutoEncontrado_DeveDeletarProdutoComSucesso()
+        {
+            Given_ProdutoComDadosValidos();
+            await When_DeletarProduto();
+            Then_ProdutoNaoDeveSerNulo();
+            Then_FlagProdutoDeletadoDeveSerTrue();
+        }
 
-        //    // Act
-        //    var listaDeProdutos = await produtoController.BuscarPorCategoria(1);
+        #region Given
 
-        //    // Assert
-        //    await produtoRepository.Received(1).BuscarPorCategoria(Arg.Any<CategoriaProduto>());
-        //    Assert.NotNull(listaDeProdutos);
-        //}
-
-        //[Fact(DisplayName = "Deve buscar produto por id com sucesso")]
-        //public async Task BuscarPorId_DeveRetornarProdutoSolicitado()
-        //{
-        //    // Arrange
-        //    var produto = new Produto("Nome", "Descrição do produto", 20, 2);
-        //    var produtoRepository = Substitute.For<IProdutoRepository>();
-        //    var unitOfWork = Substitute.For<IUnitOfWork>();
-        //    produtoRepository.UnitOfWork.Returns(unitOfWork);
-        //    produtoRepository.BuscarPorId(1).Returns(produto);
-
-        //    var produtoController = new ProdutoController(produtoRepository, new ProdutoPresenter());
-
-        //    // Act
-        //    var produtoAtualizado = await produtoController.BuscarPorId(1);
-
-        //    // Assert
-        //    await produtoRepository.Received(1).BuscarPorId(1);
-        //    Assert.NotNull(produtoAtualizado);
-        //    Assert.IsType<ProdutoResponseDTO>(produtoAtualizado);
-        //    Assert.Equal(produto.Nome, produtoAtualizado.Nome);
-        //}
-
-        //[Fact(DisplayName = "Deve buscar todos produtos com sucesso")]
-        //public async Task BuscarTodos_DeveRetornarTodosProdutos()
-        //{
-        //    // Arrange
-        //    var produtoRepository = Substitute.For<IProdutoRepository>();
-        //    var unitOfWork = Substitute.For<IUnitOfWork>();
-        //    produtoRepository.UnitOfWork.Returns(unitOfWork);
-        //    produtoRepository.BuscarTodos().Returns(new List<Produto> { new ("Nome", "Descrição do produto", 20, 2) });
-
-        //    var produtoController = new ProdutoController(produtoRepository, new ProdutoPresenter());
-
-        //    // Act
-        //    var listaDeProdutos = await produtoController.BuscarTodos();
-
-        //    // Assert
-        //    await produtoRepository.Received(1).BuscarTodos();
-        //    Assert.NotNull(listaDeProdutos);
-        //    Assert.IsType<List<ProdutoResponseDTO>>(listaDeProdutos);
-        //}
-
-        //[Fact(DisplayName = "Deve deletar o produto com sucesso")]
-        //public async Task Deletar_ProdutoEncontrado_DeveDeletarProdutoComSucesso()
-        //{
-        //    // Arrange
-        //    var produto = new Produto("Nome", "Descrição do produto", 20, 2);
-        //    var produtoRepository = Substitute.For<IProdutoRepository>();
-        //    var unitOfWork = Substitute.For<IUnitOfWork>();
-        //    produtoRepository.UnitOfWork.Returns(unitOfWork);
-        //    produtoRepository.BuscarPorId(1).Returns(produto);
-
-        //    var produtoController = new ProdutoController(produtoRepository, new ProdutoPresenter());
-
-        //    // Act
-        //    await produtoController.Deletar(1);
-
-        //    // Assert
-        //    await unitOfWork.Received(1).CommitAsync();
-        //    Assert.NotNull(produto);
-        //    Assert.True(produto.Deletado);
-        //}
+        private void Given_CategoriaProdutoValida()
+        {
+            _categoriaProduto = new CategoriaProduto(1, "teste");
+        }
 
         private void Given_ProdutoComDadosValidos()
         {
@@ -126,31 +81,138 @@
             _produto = new Produto(nome, descricao, preco, categoriaId);
         }
 
-        private async Task When_CadastrarProduto()
+        private void Given_ListaDeProdutosValida()
         {
-            var produtoRepository = Substitute.For<IProdutoRepository>();
-            var unitOfWork = Substitute.For<IUnitOfWork>();
-
-            produtoRepository.UnitOfWork.Returns(unitOfWork);
-
-            produtoRepository.Cadastrar(_produto).Returns(_produto);
-
-            var produtoController = new ProdutoController(produtoRepository, new ProdutoPresenter());
-
-            _novoProdutoDto = await produtoController.Cadastrar(_produto.Nome, _produto.Descricao, _produto.Preco, _produto.Categoria.Id);
+            _produtos = new List<Produto> { new("Nome", "Descrição do produto", 20, 2) };
         }
 
-        private void Then_ProdutoCriadoNaoDeveSerNulo()
+        #endregion
+
+        #region When
+
+        private async Task When_BuscarProdutoPorId()
         {
-            Assert.NotNull(_novoProdutoDto);
+            _produtoRepository = Substitute.For<IProdutoRepository>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
+            _produtoRepository.UnitOfWork.Returns(_unitOfWork);
+            _produtoRepository.BuscarPorId(1).Returns(_produto);
+
+            var produtoController = new ProdutoController(_produtoRepository, new ProdutoPresenter());
+
+            // Act
+            _produtoResponseDto = await produtoController.BuscarPorId(1);
+        }
+
+        private async Task When_BuscarProdutosPorCategoria()
+        {
+            _produtoRepository = Substitute.For<IProdutoRepository>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
+            _produtoRepository.UnitOfWork.Returns(_unitOfWork);
+            _produtoRepository.BuscarPorCategoria(_categoriaProduto).Returns(new List<Produto> { new("Nome", "Descrição do produto", 20.0m, 2) });
+
+            var produtoController = new ProdutoController(_produtoRepository, new ProdutoPresenter());
+
+            _produtosResponseDto = await produtoController.BuscarPorCategoria(1);
+
+            await _produtoRepository.Received(1).BuscarPorCategoria(Arg.Any<CategoriaProduto>());
+        }
+
+        private async Task When_DeletarProduto()
+        {
+            _produtoRepository = Substitute.For<IProdutoRepository>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
+            _produtoRepository.UnitOfWork.Returns(_unitOfWork);
+            _produtoRepository.BuscarPorId(1).Returns(_produto);
+
+            _produtoController = new ProdutoController(_produtoRepository, new ProdutoPresenter());
+
+            await _produtoController.Deletar(1);
+        }
+
+        private async Task When_CadastrarProduto()
+        {
+            _produtoRepository = Substitute.For<IProdutoRepository>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
+
+            _produtoRepository.UnitOfWork.Returns(_unitOfWork);
+
+            _produtoRepository.Cadastrar(_produto).Returns(_produto);
+
+            var produtoController = new ProdutoController(_produtoRepository, new ProdutoPresenter());
+
+            _produtoResponseDto = await produtoController.Cadastrar(_produto.Nome, _produto.Descricao, _produto.Preco, _produto.Categoria.Id);
+        }
+
+        private async Task When_AtualizarProduto()
+        {
+            _produtoRepository = Substitute.For<IProdutoRepository>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
+            _produtoRepository.UnitOfWork.Returns(_unitOfWork);
+            _produtoRepository.BuscarPorId(Arg.Any<int>()).Returns(_produto);
+            var produtoController = new ProdutoController(_produtoRepository, new ProdutoPresenter());
+
+            // Act
+            await produtoController.Atualizar(0, "Novo Nome", "Nova Descrição", 20, 2);
+        }
+
+        private async Task When_BuscarTodosProdutos()
+        {
+            _produtoRepository = Substitute.For<IProdutoRepository>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
+            _produtoRepository.UnitOfWork.Returns(_unitOfWork);
+            _produtoRepository.BuscarTodos().Returns(_produtos);
+
+            var produtoController = new ProdutoController(_produtoRepository, new ProdutoPresenter());
+
+            _produtosResponseDto = await produtoController.BuscarTodos();
+
+            await _produtoRepository.Received(1).BuscarTodos();
+        }
+
+        #endregion
+
+        #region Then
+
+        private async Task Then_DeveTerMesmoNomeCadastrado()
+        {
+            await _produtoRepository.Received(1).BuscarPorId(1);
+            Assert.IsType<ProdutoResponseDTO>(_produtoResponseDto);
+            Assert.Equal(_produto.Nome, _produtoResponseDto.Nome);
+        }
+
+        private void Then_ListaProdutoDtoNaoDeveSerNula()
+        {
+            Assert.NotNull(_produtosResponseDto);
+        }
+
+        private void Then_ProdutoNaoDeveSerNulo()
+        {
+            Assert.NotNull(_produto);
+        }
+
+        private void Then_ProdutoDtoCriadoNaoDeveSerNulo()
+        {
+            Assert.NotNull(_produtoResponseDto);
         }
 
         private void Then_TodosAsPropriedadesDevemSerIguais()
         {
-            Assert.Equal(_produto.Nome, _novoProdutoDto.Nome);
-            Assert.Equal(_produto.Descricao, _novoProdutoDto.Descricao);
-            Assert.Equal(_produto.Preco, _novoProdutoDto.Preco);
-            Assert.Equal(CategoriaProduto.From(_produto.Categoria.Id).Nome, _novoProdutoDto.Categoria);
+            Assert.Equal(_produto.Nome, _produtoResponseDto.Nome);
+            Assert.Equal(_produto.Descricao, _produtoResponseDto.Descricao);
+            Assert.Equal(_produto.Preco, _produtoResponseDto.Preco);
+            Assert.Equal(CategoriaProduto.From(_produto.Categoria.Id).Nome, _produtoResponseDto.Categoria);
         }
+
+        private async Task Then_DeveRealizarCommit()
+        {
+            await _unitOfWork.Received(1).CommitAsync();
+        }
+
+        private void Then_FlagProdutoDeletadoDeveSerTrue()
+        {
+            Assert.True(_produto.Deletado);
+        }
+
+        #endregion
     }
 }

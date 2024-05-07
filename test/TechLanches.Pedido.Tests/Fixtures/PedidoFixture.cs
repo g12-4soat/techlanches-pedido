@@ -1,13 +1,11 @@
-﻿using TechLanches.Domain.Constantes;
-using TechLanches.Domain.Services;
+﻿using TechLanches.Domain.Services;
 using TechLanches.Domain.Validations;
-using TechLanches.Domain.ValueObjects;
 
-namespace TechLanchesPedido.Tests.UnitTests.Fixtures
+namespace TechLanchesPedido.Tests.Fixtures
 {
     public class PedidoFixture : IDisposable
     {
-        public readonly IStatusPedidoValidacaoService StatusPedidoValidacaoService;
+        public IStatusPedidoValidacaoService? StatusPedidoValidacaoService;
 
         public PedidoFixture()
         {
@@ -29,22 +27,12 @@ namespace TechLanchesPedido.Tests.UnitTests.Fixtures
 
         public Pedido GerarPedidoValido()
         {
-            return new Pedido(new Cpf(Constants.CPF_USER_DEFAULT), new List<ItemPedido> { new ItemPedido(1, 1, 1) });
+            return new Pedido(new Cpf(Constants.CPF_USER_DEFAULT), GerarItensPedidoValidos());
         }
 
         public List<Pedido> GerarPedidosValidos()
         {
-            return new List<Pedido> { new Pedido(new Cpf(Constants.CPF_USER_DEFAULT), new List<ItemPedido> { new ItemPedido(1, 1, 1) }) };
-        }
-
-        public Pedido GerarPedidoSemClienteValido()
-        {
-            return new Pedido(null, new List<ItemPedido> { new ItemPedido(1, 1, 1) });
-        }
-
-        public List<Pedido> GerarPedidosSemClientesValidos()
-        {
-            return new List<Pedido> { new Pedido(null, new List<ItemPedido> { new ItemPedido(1, 1, 1) }) };
+            return new List<Pedido> { GerarPedidoValido() };
         }
 
         public ItemPedido GerarItemPedidoValido()
@@ -54,11 +42,12 @@ namespace TechLanchesPedido.Tests.UnitTests.Fixtures
 
         public List<ItemPedido> GerarItensPedidoValidos()
         {
-            return new List<ItemPedido> { new ItemPedido(1, 1, 1) };
+            return new List<ItemPedido> { GerarItemPedidoValido() };
         }
 
         public void Dispose()
         {
+            StatusPedidoValidacaoService = null;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace TechLanches.Application.Controllers.Interfaces
         Task<List<PedidoResponseDTO>> BuscarTodos();
         Task<PedidoResponseDTO> BuscarPorId(int idPedido);
         Task<List<PedidoResponseDTO>> BuscarPorStatus(StatusPedido statusPedido);
-        Task<PedidoResponseDTO> Cadastrar(UserTokenDTO user, List<ItemPedido> itensPedido);
+        Task<PedidoResponseDTO> Cadastrar(Cpf cpf, List<ItemPedido> itensPedido);
         Task<PedidoResponseDTO> TrocarStatus(int pedidoId, StatusPedido statusPedido);
     }
 }

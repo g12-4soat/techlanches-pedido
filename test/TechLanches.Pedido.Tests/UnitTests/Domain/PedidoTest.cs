@@ -1,4 +1,4 @@
-﻿using TechLanchesPedido.Tests.UnitTests.Fixtures;
+﻿using TechLanchesPedido.Tests.Fixtures;
 
 namespace TechLanchesPedido.Tests.UnitTests.Domain
 {
