@@ -18,6 +18,16 @@
             return !(EqualOperator(left, right));
         }
 
+        public static bool operator ==(ValueObject a, ValueObject b)
+        {
+            return EqualOperator(a, b);
+        }
+
+        public static bool operator !=(ValueObject a, ValueObject b)
+        {
+            return NotEqualOperator(a, b);
+        }
+
         protected abstract IEnumerable<object> RetornarPropriedadesDeEquidade();
 
         public override bool Equals(object obj)

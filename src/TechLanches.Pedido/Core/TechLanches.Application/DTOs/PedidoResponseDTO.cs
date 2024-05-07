@@ -1,4 +1,5 @@
 ﻿using TechLanches.Domain.Enums;
+using TechLanches.Domain.ValueObjects;
 
 namespace TechLanches.Application.DTOs
 {
@@ -7,6 +8,12 @@ namespace TechLanches.Application.DTOs
     /// </summary>
     public class PedidoResponseDTO
     {
+        public PedidoResponseDTO()
+        {
+            ItensPedido = new List<ItemPedidoResponseDTO>();
+            Pagamento = new PagamentoResponseDTO();
+        }
+
         /// <summary>
         /// Id do pedido
         /// </summary>
@@ -17,7 +24,7 @@ namespace TechLanches.Application.DTOs
         /// Id do cliente
         /// </summary>
         /// <example>2</example>
-        public int? ClienteId { get; set; }
+        public string ClienteCpf { get; set; }
 
         /// <summary>
         /// Nome do Status do pedido 

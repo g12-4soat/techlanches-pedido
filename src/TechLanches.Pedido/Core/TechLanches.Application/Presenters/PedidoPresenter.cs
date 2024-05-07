@@ -10,8 +10,7 @@ namespace TechLanches.Application.Presenters
     {
         public async Task<PedidoResponseDTO> ParaDto(Pedido entidade, IPagamentoGateway pagamentoGateway)
         {
-            var dto = entidade.Adapt<PedidoResponseDTO>();
-            dto.Pagamento = await pagamentoGateway.RetornarPagamentoPorPedidoId(entidade.Id);
+            PedidoResponseDTO dto = await PreencherPedido(entidade, pagamentoGateway);
             return dto;
         }
 
@@ -21,12 +20,20 @@ namespace TechLanches.Application.Presenters
 
             foreach (var entidade in entidades)
             {
-                var dto = entidade.Adapt<PedidoResponseDTO>();
-                dto.Pagamento = await pagamentoGateway.RetornarPagamentoPorPedidoId(entidade.Id);
+                PedidoResponseDTO dto = await PreencherPedido(entidade, pagamentoGateway);
                 lista.Add(dto);
             }
 
             return lista;
+        }
+
+        private static async Task<PedidoResponseDTO> PreencherPedido(Pedido entidade, IPagamentoGateway pagamentoGateway)
+        {
+            //framework de mapeamento não consegue lidar com value objects
+            var dto = entidade.Adapt<PedidoResponseDTO>();
+            dto.ClienteCpf = entidade.Cpf.Numero;
+            dto.Pagamento = await pagamentoGateway.RetornarPagamentoPorPedidoId(entidade.Id);
+            return dto;
         }
     }
 }

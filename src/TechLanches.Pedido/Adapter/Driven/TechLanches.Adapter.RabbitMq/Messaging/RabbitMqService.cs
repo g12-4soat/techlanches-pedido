@@ -29,31 +29,6 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
             _channel.BasicQos(0, 1, false);
         }
 
-        public async Task Consumir(Func<string, Task> function)
-        {
-            var consumer = new AsyncEventingBasicConsumer(_channel);
-
-            consumer.Received += async (model, ea) =>
-            {
-                try
-                {
-                    var body = ea.Body.ToArray();
-                    var message = Encoding.UTF8.GetString(body);
-                    await function(message);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Erro ao processar mensagem: {ex.Message}");
-                }
-                finally 
-                {
-                    _channel.BasicAck(ea.DeliveryTag, false);
-                }
-            };
-
-            _channel.BasicConsume(queue: _rabbitOptions.Queue, autoAck: false, consumer: consumer);
-        }
-
         public void Publicar(IBaseMessage baseMessage)
         {
             var mensagem = Encoding.UTF8.GetBytes(baseMessage.GetMessage());

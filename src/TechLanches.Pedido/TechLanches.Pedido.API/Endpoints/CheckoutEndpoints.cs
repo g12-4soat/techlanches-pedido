@@ -28,22 +28,11 @@ namespace TechLanches.Adapter.API.Endpoints
             [FromBody] PedidoRequestDTO pedidoDto,
             [FromServices] IPedidoController pedidoController,
             [FromServices] IProdutoController produtoController,
-            [FromServices] ICheckoutController checkoutController,
-            [FromHeader(Name = "x-id-token")] string cognitoIdToken//TODO pegar cpf do bearer token
+            [FromServices] ICheckoutController checkoutController
             )
         {
             if (pedidoDto.ItensPedido.Count == 0)
                 return Results.BadRequest(MensagensConstantes.SEM_NENHUM_ITEM_PEDIDO);
-
-            //var decodedToken = ValidarToken(cognitoIdToken);
-            //
-            //if (decodedToken is null)
-            //{
-            //    return Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Id Token nulo ou inválido.", StatusCode = HttpStatusCode.BadRequest });
-            //}
-            //
-            //UserTokenDTO userTokenDto = GerUserTokenDto(decodedToken);
-            UserTokenDTO userTokenDto = new UserTokenDTO { Username = Constants.USER_DEFAULT };
 
             var itensPedido = new List<ItemPedido>();
 
@@ -55,7 +44,7 @@ namespace TechLanches.Adapter.API.Endpoints
                 itensPedido.Add(itemPedidoCompleto);
             }
 
-            var novoPedido = await pedidoController.Cadastrar(userTokenDto, itensPedido);
+            var novoPedido = await pedidoController.Cadastrar(RetornarCpf(), itensPedido);
 
             var checkoutValido = await checkoutController.ValidarCheckout(novoPedido.Id);
 
@@ -67,27 +56,13 @@ namespace TechLanches.Adapter.API.Endpoints
             return Results.Ok(qrdCodeData);
         }
 
-        private static UserTokenDTO GerUserTokenDto(JwtSecurityToken decodedToken)
+        private static Cpf RetornarCpf()
         {
-            return new UserTokenDTO
-            {
-                Username = decodedToken.Payload["cognito:username"].ToString(),
-                Email = decodedToken.Payload["email"].ToString(),
-                Nome = decodedToken.Payload["name"].ToString(),
-            };
-        }
+            //TODO pegar do httpcontext
+            var cpf = Constants.USER_DEFAULT;
+            //var cpf = user.Username == Constants.USER_DEFAULT ? Constants.CPF_USER_DEFAULT : user.Username;
 
-        private static JwtSecurityToken? ValidarToken(string stringToken)
-        {
-            try
-            {
-                var decodedToken = new JwtSecurityToken(stringToken);
-                return decodedToken;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return new Cpf(cpf);
         }
     }
 }

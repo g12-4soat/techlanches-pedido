@@ -1,7 +1,5 @@
 ﻿using TechLanches.Domain.Aggregates;
 using TechLanches.Domain.Constantes;
-using TechLanches.Domain.Entities;
-using TechLanches.Domain.Enums;
 using TechLanches.Domain.ValueObjects;
 
 namespace TechLanches.Adapter.SqlServer

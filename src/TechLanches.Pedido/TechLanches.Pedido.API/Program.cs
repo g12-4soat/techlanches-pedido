@@ -5,7 +5,6 @@ using TechLanches.Adapter.API.Options;
 using TechLanches.Adapter.AWS.SecretsManager;
 using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
-using TechLanches.Application;
 using TechLanches.Application.Constantes;
 using TechLanchesPedido.API.Middlewares;
 
@@ -24,9 +23,6 @@ builder.WebHost.ConfigureAppConfiguration(((_, configurationBuilder) =>
 
 builder.Services.Configure<TechLanchesPedidoDatabaseSecrets>(builder.Configuration);
 builder.Services.Configure<TechLanchesCognitoSecrets>(builder.Configuration);
-
-
-AppSettings.Configuration = builder.Configuration;
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,5 +1,4 @@
 ﻿using TechLanches.Application.Gateways.Interfaces;
-using TechLanches.Core;
 using TechLanches.Domain.Enums;
 
 namespace TechLanches.Application.UseCases.Pagamentos
@@ -11,16 +10,11 @@ namespace TechLanches.Application.UseCases.Pagamentos
             IPedidoGateway pedidoGateway,
             IPagamentoGateway pagamentoGateway)
         {
-            var pedido = await pedidoGateway.BuscarPorId(pedidoId)
-                ?? throw new DomainException($"Pedido não encontrado para checkout - PedidoId: {pedidoId}");
+            var pedido = await pedidoGateway.BuscarPorId(pedidoId);
 
-            if (pedido.StatusPedido != StatusPedido.PedidoCriado)
-                throw new DomainException($"Status não autorizado para checkout - StatusPedido: {pedido.StatusPedido}");
-
-            if (await VerificarSeExistemPagamentos(pedidoId, pagamentoGateway))
-                throw new DomainException($"Pedido já contém pagamento");
-
-            return true;
+            return pedido is not null
+                && pedido.StatusPedido == StatusPedido.PedidoCriado
+                && !await VerificarSeExistemPagamentos(pedidoId, pagamentoGateway);
         }
 
         private async static Task<bool> VerificarSeExistemPagamentos(int pedidoId, IPagamentoGateway pagamentoGateway)

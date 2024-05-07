@@ -1,191 +1,307 @@
-﻿//using NSubstitute;
-//using TechLanches.Adapter.RabbitMq.Messaging;
-//using TechLanches.Application.Controllers;
-//using TechLanches.Application.Presenters;
-//using TechLanches.UnitTests.Fixtures;
+﻿using System;
+using TechLanches.Adapter.RabbitMq;
+using TechLanches.Adapter.RabbitMq.Messaging;
+using TechLanches.Application.Gateways.Interfaces;
+using TechLanches.Domain.Aggregates;
+using TechLanchesPedido.Tests.Fixtures;
 
-//namespace TechLanchesPedido.Tests.BDDTests.Services
-//{
-//    [Trait("Services", "Pedido")]
-//    public class PedidoTest : IClassFixture<PedidoFixture>
-//    {
-//        private readonly PedidoFixture _pedidoFixture;
+namespace TechLanchesPedido.Tests.BDDTests.Services
+{
+    [Trait("Services", "Pedido")]
+    public class PedidoTest : IClassFixture<PedidoFixture>
+    {
+        private Pedido _pedido;
+        private List<Pedido> _pedidos;
+        private Cpf _cpf;
+        private List<ItemPedido> _itensPedidos;
+        private PedidoResponseDTO _pedidoResponseDto;
+        private List<PedidoResponseDTO> _pedidosResponseDto;
+        private IPagamentoGateway _pagamentoGateway;
+        private IPedidoRepository _pedidoRepository;
+        private IRabbitMqService _rabbitMqService;
+        private readonly PedidoFixture _pedidoFixture;
+        private DomainException _domainException;
 
-//        public PedidoTest(PedidoFixture pedidoFixture)
-//        {
-//            _pedidoFixture = pedidoFixture;
-//        }
+        public PedidoTest(PedidoFixture pedidoFixture)
+        {
+            _pedidoFixture = pedidoFixture;
+        }
 
-//        [Fact(DisplayName = "Buscar todos pedidos com sucesso")]
-//        public async Task BuscarTodos_DeveRetornarTodosPedidos()
-//        {
-//            //Arrange    
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
+        [Fact(DisplayName = "Buscar todos pedidos com sucesso")]
+        public async Task BuscarTodos_DeveRetornarTodosPedidos()
+        {
+            Given_PedidosValidos();
+            await When_BuscarTodos();
+            Then_DeveRetornarListaDePedidosNaoVazia();
+            await _pedidoRepository.Received().BuscarTodos();
+        }
 
-//            pedidoRepository.BuscarTodos().Returns(_pedidoFixture.GerarPedidosValidos());
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+        [Fact(DisplayName = "Buscar pedido por id com sucesso")]
+        public async Task BuscarPorId_DeveRetornarPedidoSolicitado()
+        {
+            Given_PedidoValido();
+            await When_BuscarPorId();
+            Then_PedidoResponseDtoNaoDeveSerNulo();
+            await _pedidoRepository.Received().BuscarPorId(Arg.Any<int>());
+        }
 
-//            //Act 
-//            var pedidos = await pedidoController.BuscarTodos();
+        [Fact(DisplayName = "Buscar pedidos por status com sucesso")]
+        public async Task BuscarPorStatus_DeveRetornarPedidoComStatusSolicitado()
+        {
+            Given_PedidosValidos();
+            await When_BuscarPorStatus();
+            Then_DeveRetornarListaDePedidosNaoVazia();            
+            await _pedidoRepository.Received().BuscarPorStatus(StatusPedido.PedidoEmPreparacao);
+        }
 
-//            //Assert
-//            await pedidoRepository.Received().BuscarTodos();
-//            Assert.NotNull(pedidos);
-//            Assert.True(pedidos.Any());
-//        }
+        [Fact(DisplayName = "Deve trocar status com sucesso")]
+        public async Task TrocarStatus_ComStatusValido_DeveRetornarSucesso()
+        {
+            Given_PedidoValido();
+            await When_TrocarStatusComPedidoValido();
+            Then_StatusPedidoResponseDtoDeveSerIgualPedidoRecebido();
+            Then_PedidoResponseDtoNaoDeveSerNulo();
+            await _pedidoRepository.Received().BuscarPorId(Arg.Any<int>());
+        }
 
-//        [Fact(DisplayName = "Buscar pedido por id com sucesso")]
-//        public async Task BuscarPorId_DeveRetornarPedidoSolicitado()
-//        {
-//            //Arrange    
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
+        [Fact(DisplayName = "Trocar status pedido inexistente com falha")]
+        public async Task TrocarStatus_ComPedidoInexistente_DeveLancarException()
+        {
+            Given_PedidoInexistente();
+            await When_TrocarStatusComPedidoNulo();
+            Then_DeveLancarDomainException();
+            Then_ExceptionDeveConterMensagem("Não foi encontrado nenhum pedido com id informado.");
+        }
 
-//            pedidoRepository.BuscarPorId(1).Returns(_pedidoFixture.GerarPedidoValido());
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+        [Fact(DisplayName = "Trocar status pedido com falha")]
+        public async Task TrocarStatus_ComStatusInvalido_DeveLancarException()
+        {
+            Given_PedidoValido();
+            await When_TrocarStatusComStatusInvalido();
+            Then_DeveLancarDomainException();
+            Then_ExceptionDeveConterMensagem("O status selecionado não é válido");
+        }
 
-//            //Act 
-//            var pedido = await pedidoController.BuscarPorId(1);
+        [Fact(DisplayName = "Deve cadastrar pedido com sucesso")]
+        public async Task CadastrarPedido_DeveRetornarSucesso()
+        {
+            Given_PedidoValidoComCpfEItensValidos();
+            await When_CadastrarPedido();
+            Then_PedidoResponseDtoNaoDeveSerNulo();
+            Then_PedidoResponseCpfDeveTerMesmoCpfDoPedido();
+            await _pedidoRepository.Received().Cadastrar(_pedido);
+        }
 
-//            //Assert
-//            await pedidoRepository.Received().BuscarPorId(1);
-//            Assert.NotNull(pedido);
-//            Assert.Equal(1, pedido.Valor);
-//        }
+        [Fact(DisplayName = "Trocar status pedido sucesso publica no RabbitMQ")]
+        public async Task TrocarStatus_DevePublicarMensagemAposCommitAsync()
+        {
+            Given_PedidoValido();
+            await When_TrocarStatusComPedidoValido();
+            Then_PedidoResponseDtoNaoDeveSerNulo();
+            Then_StatusPedidoResponseDtoDeveSerIgualPedidoRecebido();
+            Then_DevePublicarMensagemTrocaStatus();
+        }
 
-//        [Fact(DisplayName = "Buscar pedidos por status com sucesso")]
-//        public async Task BuscarPorStatus_DeveRetornarPedidoComStatusSolicitado()
-//        {
-//            //Arrange    
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
+        #region Given
 
-//            pedidoRepository.BuscarPorStatus(StatusPedido.PedidoEmPreparacao).Returns(_pedidoFixture.GerarPedidosValidos());
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+        private void Given_PedidoValidoComCpfEItensValidos()
+        {
+            _cpf = new Cpf("046.047.173-20");
+            _itensPedidos = _pedidoFixture.GerarItensPedidoValidos();
+            _pedido = new Pedido(_cpf, _itensPedidos);
+        }
 
-//            //Act 
-//            var pedidos = await pedidoController.BuscarPorStatus(StatusPedido.PedidoEmPreparacao);
+        private void Given_PedidoValido()
+        {
+            _pedido = _pedidoFixture.GerarPedidoValido();
+        }
 
-//            //Assert
-//            await pedidoRepository.Received().BuscarPorStatus(StatusPedido.PedidoEmPreparacao);
-//            Assert.NotNull(pedidos);
-//            Assert.True(pedidos.Any());
-//        }
+        private void Given_PedidosValidos()
+        {
+            _pedidos = _pedidoFixture.GerarPedidosValidos();
+        }
 
-//        [Fact(DisplayName = "Deve trocar status com sucesso")]
-//        public async Task TrocarStatus_ComStatusValido_DeveRetornarSucesso()
-//        {
-//            //Arrange    
-//            const int PEDIDO_ID = 1;
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
-//            var pedidoEditar = _pedidoFixture.GerarPedidoSemClienteValido();
+        private static void Given_PedidoInexistente()
+        {
 
-//            pedidoRepository.BuscarPorId(PEDIDO_ID).Returns(pedidoEditar);
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+        }
 
-//            //Act 
-//            var pedido = await pedidoController.TrocarStatus(PEDIDO_ID, StatusPedido.PedidoRecebido);
+        #endregion
 
-//            //Assert
-//            await pedidoRepository.Received().BuscarPorId(PEDIDO_ID);
-//            Assert.NotNull(pedido);
+        #region When
 
-//        }
+        private async Task When_CadastrarPedido()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
 
-//        [Fact(DisplayName = "Trocar status pedido inexistente com falha")]
-//        public async Task TrocarStatus_ComPedidoInexistente_DeveLancarException()
-//        {
-//            //Arrange    
-//            const int PEDIDO_ID = 1;
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
+            _pedidoRepository.Cadastrar(_pedido).Returns(_pedido);
 
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService,
+                _rabbitMqService,
+                _pagamentoGateway);
 
-//            //Act 
-//            var exception = await Assert.ThrowsAsync<DomainException>(async () => await pedidoController.TrocarStatus(PEDIDO_ID, StatusPedido.PedidoEmPreparacao));
+            _pedidoResponseDto = await pedidoController.Cadastrar(_cpf, _itensPedidos);
+        }
 
-//            //Assert
-//            Assert.NotNull(exception);
-//            Assert.Equal("Não foi encontrado nenhum pedido com id informado.", exception.Message);
-//        }
+        private async Task When_TrocarStatusComPedidoValido()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
 
-//        [Fact(DisplayName = "Trocar status pedido com falha")]
-//        public async Task TrocarStatus_ComStatusInvalido_DeveLancarException()
-//        {
-//            //Arrange    
-//            const int PEDIDO_ID = 1;
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
-//            var pedidoEditar = _pedidoFixture.GerarPedidoSemClienteValido();
+            _pedidoRepository.BuscarPorId(_pedido.Id).Returns(_pedido);
 
-//            pedidoRepository.BuscarPorId(PEDIDO_ID).Returns(pedidoEditar);
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService!,
+                _rabbitMqService,
+                _pagamentoGateway);
 
-//            //Act 
-//            var exception = await Assert.ThrowsAsync<DomainException>(async () => await pedidoController.TrocarStatus(PEDIDO_ID, StatusPedido.PedidoFinalizado));
+            _pedidoResponseDto = await pedidoController.TrocarStatus(_pedido.Id, StatusPedido.PedidoRecebido);
+        }
 
-//            //Assert
-//            Assert.NotNull(exception);
-//            Assert.Equal("O status selecionado não é válido", exception.Message);
-//        }
+        private async Task When_TrocarStatusComStatusInvalido()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
 
-//        [Fact(DisplayName = "Deve cadastrar pedido com sucesso")]
-//        public async Task CadastrarPedido_DeveRetornarSucesso()
-//        {
-//            //Arrange
-//            var cpf = new Cpf("046.047.173-20");
-//            var userTokenDTO = new UserTokenDTO
-//            {
-//                Username = "046.047.173-20"
-//            };
-//            var itensPedidos = _pedidoFixture.GerarItensPedidoValidos();
-//            var pedidoReturn = new Pedido(1, itensPedidos);
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
-//            clienteRepository.BuscarPorCpf(cpf).Returns(new Cliente("Joao", "joao@gmail.com", cpf.Numero));
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+            _pedidoRepository.BuscarPorId(_pedido.Id).Returns(_pedido);
 
-//            pedidoRepository.Cadastrar(pedidoReturn).Returns(pedidoReturn);
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService!,
+                _rabbitMqService,
+                _pagamentoGateway);
 
-//            //Act 
-//            var pedido = await pedidoController.Cadastrar(userTokenDTO, itensPedidos);
+            _domainException = await Assert.ThrowsAsync<DomainException>(async () 
+                => await pedidoController.TrocarStatus(_pedido.Id, StatusPedido.PedidoFinalizado));
+        }
 
-//            //Assert
-//            await pedidoRepository.Received().Cadastrar(pedidoReturn);
-//            Assert.NotNull(pedido);
-//            Assert.Equal(1, pedido.ClienteId);
-//        }
+        private async Task When_TrocarStatusComPedidoNulo()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
 
-//        [Fact(DisplayName = "Trocar status pedido sucesso publica no RabbitMQ")]
-//        public async Task TrocarStatus_DevePublicarMensagemAposCommitAsync()
-//        {
-//            //Arrange    
-//            const int PEDIDO_ID = 1;
-//            var pedidoRepository = Substitute.For<IPedidoRepository>();
-//            var clienteRepository = Substitute.For<IClienteRepository>();
-//            var rabbitMqService = Substitute.For<IRabbitMqService>();
-//            var pedidoEditar = _pedidoFixture.GerarPedidoSemClienteValido();
+            _pedidoRepository.BuscarPorId(Arg.Any<int>()).Returns(_pedido);
 
-//            pedidoRepository.BuscarPorId(PEDIDO_ID).Returns(pedidoEditar);
-//            var pedidoController = new PedidoController(pedidoRepository, new PedidoPresenter(), clienteRepository, _pedidoFixture.StatusPedidoValidacaoService, rabbitMqService);
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService!,
+                _rabbitMqService,
+                _pagamentoGateway);
 
-//            //Act 
-//            var result = await pedidoController.TrocarStatus(PEDIDO_ID, StatusPedido.PedidoRecebido);
+            _domainException = await Assert.ThrowsAsync<DomainException>(async ()
+                => await pedidoController.TrocarStatus(Arg.Any<int>(), StatusPedido.PedidoFinalizado));
+        }
 
-//            //Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(StatusPedido.PedidoRecebido, result.StatusPedido);
-//            rabbitMqService.Received(1).Publicar(Arg.Any<int>());
-//        }
-//    }
-//}
+        private async Task When_BuscarPorStatus()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
+
+            _pedidoRepository.BuscarPorStatus(StatusPedido.PedidoEmPreparacao).Returns(_pedidos);
+
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService!,
+                _rabbitMqService,
+                _pagamentoGateway);
+
+            _pedidosResponseDto = await pedidoController.BuscarPorStatus(StatusPedido.PedidoEmPreparacao);
+        }
+
+        private async Task When_BuscarPorId()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
+
+            _pedidoRepository.BuscarPorId(_pedido.Id).Returns(_pedido);
+
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService!,
+                _rabbitMqService,
+                _pagamentoGateway);
+
+            _pedidoResponseDto = await pedidoController.BuscarPorId(_pedido.Id);
+        }
+
+        private async Task When_BuscarTodos()
+        {
+            _pedidoRepository = Substitute.For<IPedidoRepository>();
+            _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+
+            _pedidoRepository.BuscarTodos().Returns(_pedidoFixture.GerarPedidosValidos());
+            var pedidoController = new PedidoController(
+                _pedidoRepository,
+                new PedidoPresenter(),
+                _pedidoFixture.StatusPedidoValidacaoService!,
+                _rabbitMqService,
+                _pagamentoGateway);
+
+            _pedidosResponseDto = await pedidoController.BuscarTodos();
+        }
+
+        #endregion
+
+        #region Then
+
+        private void Then_PedidoResponseCpfDeveTerMesmoCpfDoPedido()
+        {
+            Assert.Equal(_cpf.Numero, _pedidoResponseDto.ClienteCpf);
+        }
+
+        private void Then_PedidoResponseDtoNaoDeveSerNulo()
+        {
+            Assert.NotNull(_pedidoResponseDto);
+        }
+
+        private void Then_PedidosResponseDtoNaoDeveSerNulo()
+        {
+            Assert.NotNull(_pedidosResponseDto);
+        }
+
+        private void Then_StatusPedidoResponseDtoDeveSerIgualPedidoRecebido()
+        {
+            Assert.Equal(StatusPedido.PedidoRecebido, _pedidoResponseDto.StatusPedido);
+        }
+
+        private void Then_DevePublicarMensagemTrocaStatus()
+        {
+            _rabbitMqService.Received(1).Publicar(Arg.Any<IBaseMessage>());
+        }
+
+        private void Then_DeveLancarDomainException()
+        {
+            Assert.NotNull(_domainException);
+        }
+
+        private void Then_ExceptionDeveConterMensagem(string msg)
+        {
+            Assert.Equal(msg, _domainException.Message);
+        }
+
+        private void Then_DeveRetornarListaDePedidosNaoVazia()
+        {
+            Assert.NotNull(_pedidos);
+            Assert.True(_pedidos.Any());
+        }
+
+        #endregion
+    }
+}

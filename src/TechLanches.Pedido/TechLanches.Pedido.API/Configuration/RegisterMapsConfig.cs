@@ -25,9 +25,6 @@ namespace TechLanches.Adapter.API.Configuration
             TypeAdapterConfig<ItemPedido, ItemPedidoResponseDTO>.NewConfig()
                 .Map(dest => dest.Produto.Nome, src => src.Produto.Nome);
 
-            TypeAdapterConfig<Pagamento, PagamentoResponseDTO>.NewConfig()
-                .Map(dest => dest.StatusPagamento, src => src.StatusPagamento.ToString());
-
             TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
         }
     }
