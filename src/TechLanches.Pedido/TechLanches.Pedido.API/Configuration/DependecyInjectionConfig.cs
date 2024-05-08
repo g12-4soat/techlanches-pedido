@@ -9,6 +9,7 @@ using TechLanches.Application.Presenters;
 using TechLanches.Application.Presenters.Interfaces;
 using TechLanches.Domain.Services;
 using TechLanches.Domain.Validations;
+using TechLanchesPedido.API.Middlewares;
 
 namespace TechLanches.Adapter.API.Configuration
 {
@@ -42,7 +43,9 @@ namespace TechLanches.Adapter.API.Configuration
             services.AddScoped<IPedidoRepository, PedidoRepository>();
             services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
-            services.AddSingleton<IRabbitMqService, RabbitMqService>();            
+            services.AddSingleton<IRabbitMqService, RabbitMqService>();
+
+            services.AddScoped<JwtTokenMiddleware>();
         }
     }
 }

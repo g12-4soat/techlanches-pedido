@@ -9,7 +9,6 @@ namespace TechLanches.Core
         public int Id { get; private set; }
 
         protected Enumeration(int id, string nome) => (Id, Nome) = (id, nome);
-        protected Enumeration() { }
         public override string ToString() => Nome;
 
         public static IEnumerable<T> GetAll<T>() where T : Enumeration =>
@@ -31,8 +30,6 @@ namespace TechLanches.Core
 
             return typeMatches && valueMatches;
         }
-
-        public override int GetHashCode() => Id.GetHashCode();
 
 #pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
         public int CompareTo(object other) => Id.CompareTo(((Enumeration)other).Id);

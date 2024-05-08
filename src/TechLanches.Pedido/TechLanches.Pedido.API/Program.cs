@@ -15,11 +15,9 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 //AWS Secrets Manager
-builder.WebHost.ConfigureAppConfiguration(((_, configurationBuilder) =>
-{
-    configurationBuilder.AddAmazonSecretsManager("us-east-1", "database-credentials");
-    configurationBuilder.AddAmazonSecretsManager("us-east-1", "lambda-auth-credentials");
-}));
+builder.Configuration
+    .AddAmazonSecretsManager("us-east-1", "database-credentials")
+    .AddAmazonSecretsManager("us-east-1", "lambda-auth-credentials");
 
 builder.Services.Configure<TechLanchesPedidoDatabaseSecrets>(builder.Configuration);
 builder.Services.Configure<TechLanchesCognitoSecrets>(builder.Configuration);
@@ -56,7 +54,7 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
 //Registrar httpclient
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
-    httpClient.BaseAddress = new Uri(builder.Configuration.GetSection($"Pagamentos:BaseUrl").Value);
+    httpClient.BaseAddress = new Uri(Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE") ?? string.Empty);
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
@@ -72,7 +70,6 @@ if (app.Environment.IsDevelopment())
 }
 app.UseRouting();
 
-app.UseMiddleware<JwtTokenMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -84,5 +81,7 @@ app.AddHealthCheckEndpoint();
 app.UseMapEndpointsConfiguration();
 
 app.UseStaticFiles();
+
+app.UseMiddleware<JwtTokenMiddleware>();
 
 app.Run();

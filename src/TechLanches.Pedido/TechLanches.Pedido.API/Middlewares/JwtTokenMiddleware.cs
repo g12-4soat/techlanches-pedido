@@ -28,11 +28,11 @@ namespace TechLanchesPedido.API.Middlewares
 
                 try
                 {
-                    // Verify the token using the JwtSecurityTokenHandlerWrapper
-                    var claimsPrincipal = ValidateJwtToken(token);
+                    var claimsPrincipal = ExtractClaimsFromJwt(token);
 
-                    // Extract the user ID from the token
-                    var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    // Extract the user ID from the claims
+                    var userIdClaim = claimsPrincipal.FindFirst("username");
+                    var userId = userIdClaim?.Value;
 
                     // Store the user ID in the HttpContext items for later use
                     context.Items["Cpf"] = userId;
@@ -49,29 +49,18 @@ namespace TechLanchesPedido.API.Middlewares
             await next(context);
         }
 
-        private ClaimsPrincipal ValidateJwtToken(string token)
+        private static ClaimsPrincipal ExtractClaimsFromJwt(string token)
         {
-            try
-            {
-                // Create a token handler and validate the token
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = _cognitoSecrets.CognitoUri,
-                    ValidateLifetime = true,
-                    LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
-                    ValidateAudience = false
-                }, out SecurityToken validatedToken);
+            // Decode the token to extract claims
+            var handler = new JwtSecurityTokenHandler();
+            var decodedToken = handler.ReadJwtToken(token);
 
-                // Return the claims principal
-                return claimsPrincipal;
-            }
-            catch (SecurityTokenExpiredException)
-            {
-                // Handle token expiration
-                throw new ApplicationException("Token has expired.");
-            }
+            // Create claims from the decoded token
+            var claims = decodedToken.Claims.ToList();
+            var identity = new ClaimsIdentity(claims, "jwt");
+
+            // Return the claims principal
+            return new ClaimsPrincipal(identity);
         }
     }
 }
