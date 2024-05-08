@@ -32,8 +32,6 @@ namespace TechLanches.Core
             return typeMatches && valueMatches;
         }
 
-        public override int GetHashCode() => Id.GetHashCode();
-
 #pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
         public int CompareTo(object other) => Id.CompareTo(((Enumeration)other).Id);
 #pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).

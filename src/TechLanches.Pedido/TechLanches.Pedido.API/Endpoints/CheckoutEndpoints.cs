@@ -5,7 +5,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using TechLanches.Application.DTOs;
 using TechLanches.Application.Controllers.Interfaces;
 using TechLanches.Domain.ValueObjects;
-using System.IdentityModel.Tokens.Jwt;
 using TechLanches.Domain.Constantes;
 
 namespace TechLanches.Adapter.API.Endpoints
@@ -28,8 +27,8 @@ namespace TechLanches.Adapter.API.Endpoints
             [FromBody] PedidoRequestDTO pedidoDto,
             [FromServices] IPedidoController pedidoController,
             [FromServices] IProdutoController produtoController,
-            [FromServices] ICheckoutController checkoutController
-            )
+            [FromServices] ICheckoutController checkoutController,
+            HttpContext context)
         {
             if (pedidoDto.ItensPedido.Count == 0)
                 return Results.BadRequest(MensagensConstantes.SEM_NENHUM_ITEM_PEDIDO);
@@ -44,7 +43,7 @@ namespace TechLanches.Adapter.API.Endpoints
                 itensPedido.Add(itemPedidoCompleto);
             }
 
-            var novoPedido = await pedidoController.Cadastrar(RetornarCpf(), itensPedido);
+            var novoPedido = await pedidoController.Cadastrar(RetornarCpf(context), itensPedido);
 
             var checkoutValido = await checkoutController.ValidarCheckout(novoPedido.Id);
 
@@ -56,11 +55,14 @@ namespace TechLanches.Adapter.API.Endpoints
             return Results.Ok(qrdCodeData);
         }
 
-        private static Cpf RetornarCpf()
+        private static Cpf RetornarCpf(HttpContext context)
         {
-            //TODO pegar do httpcontext
-            var cpf = Constants.USER_DEFAULT;
-            //var cpf = user.Username == Constants.USER_DEFAULT ? Constants.CPF_USER_DEFAULT : user.Username;
+            var user = (context.Items["Cpf"]?.ToString()) 
+                ?? throw new UnauthorizedAccessException("user não pode ser nulo");
+
+            var cpf = user == Constants.USER_DEFAULT 
+                ? Constants.USER_DEFAULT
+                : user;
 
             return new Cpf(cpf);
         }
