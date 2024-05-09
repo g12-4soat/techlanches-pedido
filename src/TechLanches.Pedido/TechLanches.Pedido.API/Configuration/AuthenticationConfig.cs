@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using TechLanches.Adapter.API.Options;
 using TechLanches.Adapter.AWS.SecretsManager;
 
 namespace TechLanches.Adapter.API.Configuration
