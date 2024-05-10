@@ -33,6 +33,8 @@ builder.Services.AddAuthenticationConfig();
 //Setting Swagger
 builder.Services.AddSwaggerConfiguration();
 
+builder.Services.AddMemoryCache();
+
 //DI Abstraction
 builder.Services.AddDependencyInjectionConfiguration();
 
@@ -54,7 +56,8 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
 //Registrar httpclient
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
-    httpClient.BaseAddress = new Uri(Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE") ?? string.Empty);
+    var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
+    httpClient.BaseAddress = new Uri("http://" + url);
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
