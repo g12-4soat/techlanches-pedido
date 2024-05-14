@@ -60,8 +60,8 @@ namespace TechLanches.Adapter.API.Endpoints
             var user = (context.Items["Cpf"]?.ToString()) 
                 ?? throw new UnauthorizedAccessException("user não pode ser nulo");
 
-            var cpf = user == Constants.USER_DEFAULT 
-                ? Constants.USER_DEFAULT
+            var cpf = user == Constants.USER_DEFAULT
+                ? Constants.CPF_USER_DEFAULT
                 : user;
 
             return new Cpf(cpf);

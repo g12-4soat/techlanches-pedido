@@ -2,8 +2,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
-using TechLanches.Adapter.AWS.SecretsManager;
 using System.Net;
 using Microsoft.Extensions.Caching.Memory;
 using TechLanches.Application.Constantes;
@@ -12,14 +10,14 @@ namespace TechLanchesPedido.API.Middlewares
 {
     public class JwtTokenMiddleware : IMiddleware
     {
-        private readonly TechLanchesCognitoSecrets _cognitoSecrets;
         private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<JwtTokenMiddleware> _logger;
 
         public JwtTokenMiddleware(
-            IOptions<TechLanchesCognitoSecrets> cognitoOptions,
+            ILogger<JwtTokenMiddleware> logger,
             IMemoryCache memoryCache)
         {
-            _cognitoSecrets = cognitoOptions.Value;
+            _logger = logger;
             _memoryCache = memoryCache;
         }
 
@@ -29,10 +27,16 @@ namespace TechLanchesPedido.API.Middlewares
             var token = await context.GetTokenAsync("access_token")
                 ?? context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
+            _logger.LogInformation("access_token", context.GetTokenAsync("access_token"));
+
+            _logger.LogInformation("access_token", context.Request.Headers.Authorization.ToString());
+
             if (!token.IsNullOrEmpty())
             {
                 //put token in cache
                 _memoryCache.Set(Constants.AUTH_TOKEN_KEY, token, TimeSpan.FromMinutes(5));
+                
+                _logger.LogInformation("Token salvo no cache");
 
                 try
                 {

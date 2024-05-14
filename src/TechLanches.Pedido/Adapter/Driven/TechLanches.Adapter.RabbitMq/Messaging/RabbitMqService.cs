@@ -14,19 +14,19 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
 
         public RabbitMqService(IOptions<RabbitOptions> rabbitOptions)
         {
-            _rabbitOptions = rabbitOptions.Value;
-
-            var connectionFactory = new ConnectionFactory { HostName = _rabbitOptions.Host, UserName = _rabbitOptions.User, Password = _rabbitOptions.Password, DispatchConsumersAsync = true };
-            _connection = connectionFactory.CreateConnection();
-            _channel = _connection.CreateModel();
-
-            _channel.QueueDeclare(queue: _rabbitOptions.Queue,
-                                  durable: true,
-                                  exclusive: false,
-                                  autoDelete: false,
-                                  arguments: null);
-
-            _channel.BasicQos(0, 1, false);
+            //_rabbitOptions = rabbitOptions.Value;
+            //
+            //var connectionFactory = new ConnectionFactory { HostName = _rabbitOptions.Host, UserName = _rabbitOptions.User, Password = _rabbitOptions.Password, DispatchConsumersAsync = true };
+            //_connection = connectionFactory.CreateConnection();
+            //_channel = _connection.CreateModel();
+            //
+            //_channel.QueueDeclare(queue: _rabbitOptions.Queue,
+            //                      durable: true,
+            //                      exclusive: false,
+            //                      autoDelete: false,
+            //                      arguments: null);
+            //
+            //_channel.BasicQos(0, 1, false);
         }
 
         public void Publicar(IBaseMessage baseMessage)

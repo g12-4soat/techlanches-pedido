@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using TechLanches.Application.Constantes;
@@ -51,6 +52,10 @@ namespace TechLanches.Application.Gateways
             {
                 return await _httpClient.GetFromJsonAsync<PagamentoResponseDTO>($"api/pagamentos/status/{pedidoId}");
             }
+            catch(HttpRequestException httpEx) when (httpEx.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
@@ -62,7 +67,16 @@ namespace TechLanches.Application.Gateways
         {
             var token = _memoryCache.Get<string>(Constants.AUTH_TOKEN_KEY);
 
+            if (token == null) 
+            { 
+                _logger.LogInformation("Token não encontrado no cache");
+                throw new ArgumentNullException(nameof(token));
+            }
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            _logger.LogInformation("Request Headers", _httpClient.DefaultRequestHeaders.Authorization.ToString());
+
         }
     }
 }

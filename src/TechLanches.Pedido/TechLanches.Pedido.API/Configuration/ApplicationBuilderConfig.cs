@@ -8,8 +8,8 @@ namespace TechLanches.Adapter.API.Configuration
     {
         public static IApplicationBuilder AddCustomMiddlewares(this IApplicationBuilder applicationBuilder)
         {
-            applicationBuilder.UseMiddleware<GlobalErrorHandlingMiddleware>();
             applicationBuilder.UseMiddleware<JwtTokenMiddleware>();
+            applicationBuilder.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
             return applicationBuilder;
         }

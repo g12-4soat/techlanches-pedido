@@ -61,7 +61,7 @@ namespace TechLanches.Application.Controllers
             var pedido = await PedidoUseCases.Cadastrar(cpf, itensPedido, _pedidoGateway);
             await _pedidoGateway.CommitAsync();
 
-            return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+            return _pedidoPresenter.ParaDto(pedido);
         }
 
         public async Task<PedidoResponseDTO> TrocarStatus(int pedidoId, StatusPedido statusPedido)

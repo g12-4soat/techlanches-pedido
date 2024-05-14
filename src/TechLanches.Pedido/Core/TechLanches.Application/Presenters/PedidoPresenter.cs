@@ -8,6 +8,11 @@ namespace TechLanches.Application.Presenters
 {
     public class PedidoPresenter : IPedidoPresenter
     {
+        public PedidoResponseDTO ParaDto(Pedido entidade)
+        {
+            return entidade.Adapt<PedidoResponseDTO>();
+        }
+
         public async Task<PedidoResponseDTO> ParaDto(Pedido entidade, IPagamentoGateway pagamentoGateway)
         {
             PedidoResponseDTO dto = await PreencherPedido(entidade, pagamentoGateway);
