@@ -57,7 +57,8 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
     var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
-    httpClient.BaseAddress = new Uri("http://" + url);
+    //httpClient.BaseAddress = new Uri("http://" + url);
+    httpClient.BaseAddress = new Uri("http://api-pagamento-service.techlanches.svc.cluster.local");
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
