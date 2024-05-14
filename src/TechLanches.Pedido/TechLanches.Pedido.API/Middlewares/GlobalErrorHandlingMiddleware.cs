@@ -9,9 +9,14 @@ namespace TechLanches.Adapter.API.Middlewares
     {
         private readonly RequestDelegate _next;
 
-        public GlobalErrorHandlingMiddleware(RequestDelegate next)
+        public ILogger<GlobalErrorHandlingMiddleware> _logger { get; }
+
+        public GlobalErrorHandlingMiddleware(
+            RequestDelegate next,
+            ILogger<GlobalErrorHandlingMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -22,6 +27,7 @@ namespace TechLanches.Adapter.API.Middlewares
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -29,7 +35,6 @@ namespace TechLanches.Adapter.API.Middlewares
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var exceptionType = exception.GetType();
-
 
             var status = exceptionType switch
             {

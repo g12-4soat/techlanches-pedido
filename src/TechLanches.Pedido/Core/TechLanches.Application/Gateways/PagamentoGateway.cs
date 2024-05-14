@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using TechLanches.Application.Constantes;
@@ -10,13 +11,16 @@ namespace TechLanches.Application.Gateways
     public class PagamentoGateway : IPagamentoGateway
     {
         private readonly HttpClient _httpClient;
+        private readonly ILogger<PagamentoGateway> _logger;
         private readonly IMemoryCache _memoryCache;
 
         public PagamentoGateway(
             IHttpClientFactory httpClientFactory,
+            ILogger<PagamentoGateway> logger,
             IMemoryCache memoryCache)
         {
             _httpClient = httpClientFactory.CreateClient(Constants.NOME_API_PAGAMENTOS);
+            _logger = logger;
             _memoryCache = memoryCache;
         }
 
@@ -24,18 +28,34 @@ namespace TechLanches.Application.Gateways
         {
             AddAuthenticationHeader();
 
-            var response = await _httpClient.PostAsJsonAsync("api/pagamentos", pagamentoRequest);
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/pagamentos", pagamentoRequest);
 
-            var result = await response.Content.ReadFromJsonAsync<PagamentoResponseDTO>();
+                var result = await response.Content.ReadFromJsonAsync<PagamentoResponseDTO>();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         public async Task<PagamentoResponseDTO> RetornarPagamentoPorPedidoId(int pedidoId)
         {
             AddAuthenticationHeader();
 
-            return await _httpClient.GetFromJsonAsync<PagamentoResponseDTO>($"api/pagamentos/status/{pedidoId}");
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<PagamentoResponseDTO>($"api/pagamentos/status/{pedidoId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         private void AddAuthenticationHeader()

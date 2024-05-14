@@ -62,8 +62,6 @@ builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 
 var app = builder.Build();
 
-app.AddCustomMiddlewares();
-
 app.UseDatabaseConfiguration();
 
 // Configure the HTTP request pipeline.
@@ -72,7 +70,6 @@ if (app.Environment.IsDevelopment())
 
 }
 app.UseRouting();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -85,6 +82,6 @@ app.UseMapEndpointsConfiguration();
 
 app.UseStaticFiles();
 
-app.UseMiddleware<JwtTokenMiddleware>();
+app.AddCustomMiddlewares();
 
 app.Run();
