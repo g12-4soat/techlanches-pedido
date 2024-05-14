@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using TechLanches.Application.DTOs;
+using TechLanches.Application.Gateways;
 using TechLanches.Application.Gateways.Interfaces;
 using TechLanches.Application.Presenters.Interfaces;
 using TechLanches.Domain.Aggregates;
@@ -38,7 +39,9 @@ namespace TechLanches.Application.Presenters
 
         public PedidoResponseDTO ParaDto(Pedido pedido)
         {
-            return pedido.Adapt<PedidoResponseDTO>();
+            var dto = pedido.Adapt<PedidoResponseDTO>();
+            dto.ClienteCpf = pedido.Cpf.Numero;
+            return dto;
         }
     }
 }
