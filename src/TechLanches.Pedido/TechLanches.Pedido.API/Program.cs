@@ -51,7 +51,7 @@ builder.Services.AddHealthCheckConfig(builder.Configuration);
 
 //Criar uma politica de retry (tente 3x, com timeout de 3 segundos)
 var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
-                  .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+                  .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(1));
 
 //Registrar httpclient
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
