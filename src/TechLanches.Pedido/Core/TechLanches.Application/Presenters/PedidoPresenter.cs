@@ -35,5 +35,10 @@ namespace TechLanches.Application.Presenters
             dto.Pagamento = await pagamentoGateway.RetornarPagamentoPorPedidoId(entidade.Id);
             return dto;
         }
+
+        public PedidoResponseDTO ParaDto(Pedido pedido)
+        {
+            return pedido.Adapt<PedidoResponseDTO>();
+        }
     }
 }
