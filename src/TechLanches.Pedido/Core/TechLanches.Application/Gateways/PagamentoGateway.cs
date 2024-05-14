@@ -16,10 +16,12 @@ namespace TechLanches.Application.Gateways
 
         public PagamentoGateway(
             IHttpClientFactory httpClientFactory,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            ILogger<PagamentoGateway> logger)
         {
             _httpClient = httpClientFactory.CreateClient(Constants.NOME_API_PAGAMENTOS);
             _memoryCache = memoryCache;
+            _logger = logger;
         }
 
         public async Task<PagamentoResponseDTO> GerarPagamento(PagamentoRequestDTO pagamentoRequest)
@@ -34,9 +36,9 @@ namespace TechLanches.Application.Gateways
 
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.LogError("Erro ao processar requisição para API Pagamentos");
+                _logger.LogError(ex, "Erro ao processar requisição para API Pagamentos");
                 throw;
             }
         }
@@ -53,9 +55,9 @@ namespace TechLanches.Application.Gateways
             {
                 return null;
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.LogError("Erro ao processar requisição para API Pagamentos");
+                _logger.LogError(ex, "Erro ao processar requisição para API Pagamentos");
                 throw;
             }
         }
@@ -66,7 +68,7 @@ namespace TechLanches.Application.Gateways
 
             if (token == null)
             {
-                _logger.LogInformation("Token não encontrado no cache");
+                _logger.LogError("Token não encontrado no cache");
                 throw new ArgumentNullException(nameof(token));
             }
 
