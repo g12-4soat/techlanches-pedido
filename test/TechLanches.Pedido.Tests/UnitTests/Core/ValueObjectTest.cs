@@ -1,6 +1,6 @@
 ﻿using TechLanches.Pedido.Tests.UnitTests.Core.Assets;
 
-namespace TechLanches.Pedido.Tests.UnitTests.Core
+namespace TechLanchesPedido.Tests.UnitTests.Core
 {
     public class ValueObjectTest
     {

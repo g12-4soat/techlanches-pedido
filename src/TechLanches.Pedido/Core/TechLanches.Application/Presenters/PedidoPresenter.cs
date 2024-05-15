@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using TechLanches.Application.DTOs;
+using TechLanches.Application.Gateways;
 using TechLanches.Application.Gateways.Interfaces;
 using TechLanches.Application.Presenters.Interfaces;
 using TechLanches.Domain.Aggregates;
@@ -33,6 +34,13 @@ namespace TechLanches.Application.Presenters
             var dto = entidade.Adapt<PedidoResponseDTO>();
             dto.ClienteCpf = entidade.Cpf.Numero;
             dto.Pagamento = await pagamentoGateway.RetornarPagamentoPorPedidoId(entidade.Id);
+            return dto;
+        }
+
+        public PedidoResponseDTO ParaDto(Pedido pedido)
+        {
+            var dto = pedido.Adapt<PedidoResponseDTO>();
+            dto.ClienteCpf = pedido.Cpf.Numero;
             return dto;
         }
     }

@@ -2,8 +2,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
-using TechLanches.Adapter.AWS.SecretsManager;
 using System.Net;
 using Microsoft.Extensions.Caching.Memory;
 using TechLanches.Application.Constantes;
@@ -12,15 +10,15 @@ namespace TechLanchesPedido.API.Middlewares
 {
     public class JwtTokenMiddleware : IMiddleware
     {
-        private readonly TechLanchesCognitoSecrets _cognitoSecrets;
         private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<JwtTokenMiddleware> _logger;
 
         public JwtTokenMiddleware(
-            IOptions<TechLanchesCognitoSecrets> cognitoOptions,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            ILogger<JwtTokenMiddleware> logger)
         {
-            _cognitoSecrets = cognitoOptions.Value;
             _memoryCache = memoryCache;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -33,7 +31,9 @@ namespace TechLanchesPedido.API.Middlewares
             {
                 //put token in cache
                 _memoryCache.Set(Constants.AUTH_TOKEN_KEY, token, TimeSpan.FromMinutes(5));
-
+                
+                _logger.LogInformation("Token salvo no cache");
+                
                 try
                 {
                     var claimsPrincipal = ExtractClaimsFromJwt(token);

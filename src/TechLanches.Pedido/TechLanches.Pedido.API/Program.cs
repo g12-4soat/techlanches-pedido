@@ -6,7 +6,6 @@ using TechLanches.Adapter.AWS.SecretsManager;
 using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
 using TechLanches.Application.Constantes;
-using TechLanchesPedido.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,13 +50,13 @@ builder.Services.AddHealthCheckConfig(builder.Configuration);
 
 //Criar uma politica de retry (tente 3x, com timeout de 3 segundos)
 var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
-                  .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+                  .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(1));
 
 //Registrar httpclient
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
     var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
-    httpClient.BaseAddress = new Uri("http://" + url);
+    httpClient.BaseAddress = new Uri("http://" + url + ":5055");
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
@@ -84,7 +83,5 @@ app.AddHealthCheckEndpoint();
 app.UseMapEndpointsConfiguration();
 
 app.UseStaticFiles();
-
-app.UseMiddleware<JwtTokenMiddleware>();
 
 app.Run();

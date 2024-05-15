@@ -1,5 +1,5 @@
-﻿
-using TechLanches.Adapter.API.Middlewares;
+﻿using TechLanches.Adapter.API.Middlewares;
+using TechLanchesPedido.API.Middlewares;
 
 namespace TechLanches.Adapter.API.Configuration
 {
@@ -7,7 +7,7 @@ namespace TechLanches.Adapter.API.Configuration
     {
         public static IApplicationBuilder AddCustomMiddlewares(this IApplicationBuilder applicationBuilder)
         {
-            applicationBuilder.UseMiddleware<RequestLoggingMiddleware>();
+            applicationBuilder.UseMiddleware<JwtTokenMiddleware>();
             applicationBuilder.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
             return applicationBuilder;

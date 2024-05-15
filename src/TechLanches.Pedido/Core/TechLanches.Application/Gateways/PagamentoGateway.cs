@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using TechLanches.Application.Constantes;
@@ -11,36 +12,66 @@ namespace TechLanches.Application.Gateways
     {
         private readonly HttpClient _httpClient;
         private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<PagamentoGateway> _logger;
 
         public PagamentoGateway(
             IHttpClientFactory httpClientFactory,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            ILogger<PagamentoGateway> logger)
         {
             _httpClient = httpClientFactory.CreateClient(Constants.NOME_API_PAGAMENTOS);
             _memoryCache = memoryCache;
+            _logger = logger;
         }
 
         public async Task<PagamentoResponseDTO> GerarPagamento(PagamentoRequestDTO pagamentoRequest)
         {
-            AddAuthenticationHeader();
+            AddAuthenticationHeader(Constants.AUTH_TOKEN_KEY);
 
-            var response = await _httpClient.PostAsJsonAsync("api/pagamentos", pagamentoRequest);
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/pagamentos", pagamentoRequest);
 
-            var result = await response.Content.ReadFromJsonAsync<PagamentoResponseDTO>();
+                var result = await response.Content.ReadFromJsonAsync<PagamentoResponseDTO>();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar requisição para API Pagamentos");
+                throw;
+            }
         }
 
         public async Task<PagamentoResponseDTO> RetornarPagamentoPorPedidoId(int pedidoId)
         {
-            AddAuthenticationHeader();
+            AddAuthenticationHeader(Constants.AUTH_TOKEN_KEY);
 
-            return await _httpClient.GetFromJsonAsync<PagamentoResponseDTO>($"api/pagamentos/status/{pedidoId}");
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<PagamentoResponseDTO>($"api/pagamentos/status/{pedidoId}");
+            }
+            catch (HttpRequestException httpEx) when (httpEx.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar requisição para API Pagamentos");
+                throw;
+            }
         }
 
-        private void AddAuthenticationHeader()
+        public void AddAuthenticationHeader(string key)
         {
-            var token = _memoryCache.Get<string>(Constants.AUTH_TOKEN_KEY);
+            GetAuthenticationHeader(key);
+        }
+
+        private void GetAuthenticationHeader(string key)
+        {
+            var token = _memoryCache.Get<string>(key);
+
+            ArgumentException.ThrowIfNullOrEmpty(token, nameof(token));
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
