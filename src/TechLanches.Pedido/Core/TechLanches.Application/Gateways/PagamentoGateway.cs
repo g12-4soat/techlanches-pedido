@@ -26,7 +26,7 @@ namespace TechLanches.Application.Gateways
 
         public async Task<PagamentoResponseDTO> GerarPagamento(PagamentoRequestDTO pagamentoRequest)
         {
-            AddAuthenticationHeader();
+            AddAuthenticationHeader(Constants.AUTH_TOKEN_KEY);
 
             try
             {
@@ -45,7 +45,7 @@ namespace TechLanches.Application.Gateways
 
         public async Task<PagamentoResponseDTO> RetornarPagamentoPorPedidoId(int pedidoId)
         {
-            AddAuthenticationHeader();
+            AddAuthenticationHeader(Constants.AUTH_TOKEN_KEY);
 
             try
             {
@@ -62,15 +62,16 @@ namespace TechLanches.Application.Gateways
             }
         }
 
-        private void AddAuthenticationHeader()
+        public void AddAuthenticationHeader(string key)
         {
-            var token = _memoryCache.Get<string>(Constants.AUTH_TOKEN_KEY);
+            GetAuthenticationHeader(key);
+        }
 
-            if (token == null)
-            {
-                _logger.LogError("Token não encontrado no cache");
-                throw new ArgumentNullException(nameof(token));
-            }
+        private void GetAuthenticationHeader(string key)
+        {
+            var token = _memoryCache.Get<string>(key);
+
+            ArgumentException.ThrowIfNullOrEmpty(token, nameof(token));
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
