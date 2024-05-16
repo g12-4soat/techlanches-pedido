@@ -58,6 +58,16 @@ Para importar as collections do postman, basta acessar os links a seguir:
 
 ---
 
+## Métricas Sonar
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=g12-4soat_techlanches-pedido&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=g12-4soat_techlanches-pedido)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=g12-4soat_techlanches-pedido&metric=coverage)](https://sonarcloud.io/summary/new_code?id=g12-4soat_techlanches-pedido)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=g12-4soat_techlanches-pedido&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=g12-4soat_techlanches-pedido)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=g12-4soat_techlanches-pedido&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=g12-4soat_techlanches-pedido)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=g12-4soat_techlanches-pedido&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=g12-4soat_techlanches-pedido)
+
+---
+
 ## Pipeline Status
 | Pipeline | Status |
 | --- | --- | 
