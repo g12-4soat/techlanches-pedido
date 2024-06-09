@@ -2,6 +2,6 @@
 {
     public interface IRabbitMqService
     {
-        void Publicar(IBaseMessage baseMessage);
+        void Publicar(IBaseMessage baseMessage, string queueName);
     }
 }

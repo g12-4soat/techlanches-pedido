@@ -29,14 +29,14 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
             _channel.BasicQos(0, 1, false);
         }
 
-        public void Publicar(IBaseMessage baseMessage)
+        public void Publicar(IBaseMessage baseMessage, string queueName)
         {
             var mensagem = Encoding.UTF8.GetBytes(baseMessage.GetMessage());
 
             var properties = _channel.CreateBasicProperties();
             properties.DeliveryMode = 2; // Marca a mensagem como persistente
             _channel.BasicPublish(exchange: string.Empty,
-                                  routingKey: _rabbitOptions.Queue,
+                                  routingKey: queueName,
                                   basicProperties: properties,
                                   body: mensagem);
         }
