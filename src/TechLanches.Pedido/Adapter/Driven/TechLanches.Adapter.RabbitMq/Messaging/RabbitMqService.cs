@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json;
 using TechLanches.Adapter.RabbitMq.Options;
 
 namespace TechLanches.Adapter.RabbitMq.Messaging
@@ -27,6 +28,31 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
                                   arguments: null);
 
             _channel.BasicQos(0, 1, false);
+        }
+
+        public async Task Consumir(Func<PedidoStatusMessage, Task> function)
+        {
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                try
+                {
+                    var body = ea.Body.ToArray();
+                    var message = JsonSerializer.Deserialize<PedidoStatusMessage>(body);
+                    await function(message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao processar mensagem: {ex.Message}");
+                }
+                finally
+                {
+                    _channel.BasicAck(ea.DeliveryTag, false);
+                }
+            };
+
+            _channel.BasicConsume(queue: _rabbitOptions.QueueOrderStatus, autoAck: false, consumer: consumer);
         }
 
         public void Publicar(IBaseMessage baseMessage, string queueName)

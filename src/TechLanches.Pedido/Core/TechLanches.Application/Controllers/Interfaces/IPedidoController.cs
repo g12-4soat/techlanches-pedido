@@ -1,4 +1,5 @@
-﻿using TechLanches.Application.DTOs;
+﻿using TechLanches.Adapter.RabbitMq;
+using TechLanches.Application.DTOs;
 using TechLanches.Domain.Enums;
 using TechLanches.Domain.ValueObjects;
 
@@ -11,5 +12,6 @@ namespace TechLanches.Application.Controllers.Interfaces
         Task<List<PedidoResponseDTO>> BuscarPorStatus(StatusPedido statusPedido);
         Task<PedidoResponseDTO> Cadastrar(Cpf cpf, List<ItemPedido> itensPedido);
         Task<PedidoResponseDTO> TrocarStatus(int pedidoId, StatusPedido statusPedido);
+        Task ProcessarMensagem(PedidoStatusMessage message);
     }
 }

@@ -91,5 +91,10 @@ namespace TechLanches.Application.Controllers
 
             return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
         }
+
+        public async Task ProcessarMensagem(PedidoStatusMessage message)
+        {
+            await TrocarStatus(message.PedidoId, message.StatusPedido);
+        }
     }
 }
