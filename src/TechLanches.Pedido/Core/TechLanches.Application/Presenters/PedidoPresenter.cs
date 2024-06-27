@@ -51,7 +51,7 @@ namespace TechLanches.Application.Presenters
 
             static bool ClienteNaoIdentificavel(Pedido pedido)
             {
-                return pedido.Cpf.Numero == Constants.USER_DEFAULT
+                return pedido.Cpf.Numero == Constants.CPF_USER_DEFAULT
                     || pedido.ClienteInativo;
             }
         }

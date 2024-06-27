@@ -67,7 +67,7 @@ namespace TechLanches.Application.Controllers
         public async Task<PedidoResponseDTO> TrocarStatus(int pedidoId, StatusPedido statusPedido)
         {
             var pedido = await PedidoUseCases.TrocarStatus(pedidoId, statusPedido, _pedidoGateway, _statusPedidoValidacaoService);
-            
+
             await _pedidoGateway.CommitAsync();
 
             if (statusPedido == StatusPedido.PedidoRecebido)
@@ -77,6 +77,29 @@ namespace TechLanches.Application.Controllers
             }
 
             return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+        }
+
+        public async Task<bool> InativarDadosCliente(string cpf)
+        {
+            var sucesso = true;
+
+            var listaPedidos = await _pedidoGateway.BuscarTodos();
+
+            var pedidos = listaPedidos.Where(x => x.Cpf.Numero == cpf).ToList();
+
+            if (pedidos.Count > 0)
+            {
+                foreach (var pedido in pedidos)
+                {
+                    pedido.InativarCliente();
+                }
+
+                await _pedidoGateway.CommitAsync();
+
+                sucesso = pedidos.All(x => x.ClienteInativo);
+            }
+
+            return sucesso;
         }
     }
 }

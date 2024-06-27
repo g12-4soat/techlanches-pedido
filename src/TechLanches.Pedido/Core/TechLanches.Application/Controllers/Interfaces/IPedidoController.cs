@@ -11,5 +11,6 @@ namespace TechLanches.Application.Controllers.Interfaces
         Task<List<PedidoResponseDTO>> BuscarPorStatus(StatusPedido statusPedido);
         Task<PedidoResponseDTO> Cadastrar(Cpf cpf, List<ItemPedido> itensPedido);
         Task<PedidoResponseDTO> TrocarStatus(int pedidoId, StatusPedido statusPedido);
+        Task<bool> InativarDadosCliente(string cpf);
     }
 }
