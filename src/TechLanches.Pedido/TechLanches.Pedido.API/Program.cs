@@ -70,6 +70,11 @@ builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    await next();
+});
 app.UseHsts();
 
 app.AddCustomMiddlewares();
