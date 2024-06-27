@@ -79,17 +79,21 @@ namespace TechLanches.Application.Controllers
 
         public async Task<PedidoResponseDTO> TrocarStatus(int pedidoId, StatusPedido statusPedido)
         {
-            var pedido = await PedidoUseCases.TrocarStatus(pedidoId, statusPedido, _pedidoGateway, _statusPedidoValidacaoService);
-
-            await _pedidoGateway.CommitAsync();
-
-            if (statusPedido == StatusPedido.PedidoRecebido)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var message = new PedidoMessage(pedido.Id, pedido.Cpf.Numero);
-                _rabbitmqService.Publicar(message, _rabbitOptions.Queue);
-            }
+                var pedido = await PedidoUseCases.TrocarStatus(pedidoId, statusPedido, _pedidoGateway, _statusPedidoValidacaoService);
 
-            return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+                await _pedidoGateway.CommitAsync();
+
+                if (statusPedido == StatusPedido.PedidoRecebido)
+                {
+                    var message = new PedidoMessage(pedido.Id, pedido.Cpf.Numero);
+                    _rabbitmqService.Publicar(message, _rabbitOptions.Queue);
+                }
+
+                scope.Complete();
+                return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+            }
         }
 
         public async Task ProcessarMensagem(PedidoStatusMessage message)

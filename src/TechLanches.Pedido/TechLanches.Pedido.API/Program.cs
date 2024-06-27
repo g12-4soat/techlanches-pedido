@@ -6,6 +6,7 @@ using TechLanches.Adapter.AWS.SecretsManager;
 using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Adapter.SqlServer;
 using TechLanches.Application.Constantes;
+using TechLanches.Pedido.Consumer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.RegisterMaps();
 
 builder.Services.Configure<RabbitOptions>(builder.Configuration.GetSection("RabbitMQ"));
 
+builder.Services.AddHostedService<PedidoConsumerHostedService>();
+
 //Setting healthcheck
 builder.Services.AddHealthCheckConfig(builder.Configuration);
 
@@ -55,8 +58,10 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
 //Registrar httpclient
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
-    var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
-    httpClient.BaseAddress = new Uri("http://" + url + ":5055");
+    //var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
+    //httpClient.BaseAddress = new Uri("http://" + url + ":5055");
+
+    httpClient.BaseAddress = new Uri("https://localhost:7138");
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();

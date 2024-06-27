@@ -4,7 +4,7 @@ using TechLanches.Application.Controllers.Interfaces;
 
 namespace TechLanches.Pedido.Consumer
 {
-    internal class PedidoConsumerHostedService : BackgroundService
+    public class PedidoConsumerHostedService : BackgroundService
     {
         private readonly IPedidoController _pedidoController;
         private readonly IRabbitMqService _rabbitMqService;

@@ -12,9 +12,14 @@ namespace TechLanches.Application.UseCases.Pagamentos
         {
             var pedido = await pedidoGateway.BuscarPorId(pedidoId);
 
-            return pedido is not null
-                && pedido.StatusPedido == StatusPedido.PedidoCriado
-                && !await VerificarSeExistemPagamentos(pedidoId, pagamentoGateway);
+            //var result = pedido is not null
+            //    && pedido.StatusPedido == StatusPedido.PedidoCriado
+            //    && !await VerificarSeExistemPagamentos(pedidoId, pagamentoGateway);
+
+            var result = pedido is not null
+                && pedido.StatusPedido == StatusPedido.PedidoCriado;
+
+            return result;
         }
 
         private async static Task<bool> VerificarSeExistemPagamentos(int pedidoId, IPagamentoGateway pagamentoGateway)
