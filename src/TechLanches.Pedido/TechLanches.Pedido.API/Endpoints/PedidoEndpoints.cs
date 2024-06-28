@@ -5,6 +5,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using TechLanches.Application.DTOs;
 using TechLanches.Domain.Enums;
 using TechLanches.Application.Controllers.Interfaces;
+using TechLanches.Domain.ValueObjects;
+using TechLanches.Domain.Constantes;
 
 namespace TechLanches.Adapter.API.Endpoints;
 
@@ -56,6 +58,15 @@ public static class PedidoEndpoints
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.NotFound, type: typeof(ErrorResponseDTO), description: "Status do pedido não encontrado"))
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.InternalServerError, type: typeof(ErrorResponseDTO), description: "Erro no servidor interno"))
            .RequireAuthorization();
+
+        app.MapPut("api/pedidos/inativar/{cpf}", InativarPedidosCliente)
+           .WithTags(EndpointTagConstantes.TAG_PEDIDO)
+           .WithMetadata(new SwaggerOperationAttribute(summary: "Inativar dados do cliente nos pedidos", description: "Inativa dados relacionados ao cliente"))
+           .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.OK, type: typeof(List<StatusPedidoResponseDTO>), description: "Operação realizada com sucesso"))
+           .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.BadRequest, type: typeof(ErrorResponseDTO), description: "Requisição inválida"))
+           .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.NotFound, type: typeof(ErrorResponseDTO), description: "Pedidos do cliente não encontrados"))
+           .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.InternalServerError, type: typeof(ErrorResponseDTO), description: "Erro no servidor interno"))
+           .RequireAuthorization();
     }
 
 
@@ -89,6 +100,34 @@ public static class PedidoEndpoints
         return pedidos is not null
             ? Results.Ok(pedidos)
             : Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Erro ao buscar pedidos por status.", StatusCode = HttpStatusCode.BadRequest });
+    }
+
+    private static async Task<IResult> InativarPedidosCliente(
+    string cpf,
+    [FromServices] IPedidoController pedidoController)
+    {
+        if (string.IsNullOrWhiteSpace(cpf))
+            Results.BadRequest(new ErrorResponseDTO { MensagemErro = "CPF Inválido.", StatusCode = HttpStatusCode.BadRequest });
+
+        bool retorno = false;
+
+        try
+        {
+            var cpfValido = new Cpf(cpf);
+
+            if(cpfValido.Numero == Constants.CPF_USER_DEFAULT)
+                Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Não é possível inativar os dados desse cliente.", StatusCode = HttpStatusCode.BadRequest });
+
+            retorno = await pedidoController.InativarDadosCliente(cpfValido.Numero);
+        }
+        catch (Exception)
+        {
+            Results.BadRequest(new ErrorResponseDTO { MensagemErro = "CPF Inválido.", StatusCode = HttpStatusCode.BadRequest });
+        }
+
+        return retorno
+            ? Results.Ok(retorno)
+            : Results.BadRequest(new ErrorResponseDTO { MensagemErro = "Erro ao inativar dados do cliente.", StatusCode = HttpStatusCode.BadRequest });
     }
 
     private static async Task<IResult> TrocarStatus(

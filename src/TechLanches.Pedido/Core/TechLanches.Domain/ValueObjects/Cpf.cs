@@ -12,7 +12,7 @@ namespace TechLanches.Domain.ValueObjects
 
         public Cpf(string cpf)
         {
-            ArgumentNullException.ThrowIfNull(cpf);
+            ArgumentException.ThrowIfNullOrWhiteSpace(cpf);
 
             Numero = Validar(cpf) ? LimparCpf(cpf) : throw new DomainException($"CPF inválido {cpf}");
         }
