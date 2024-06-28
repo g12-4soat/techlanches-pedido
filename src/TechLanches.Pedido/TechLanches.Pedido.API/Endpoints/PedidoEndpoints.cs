@@ -59,7 +59,7 @@ public static class PedidoEndpoints
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.InternalServerError, type: typeof(ErrorResponseDTO), description: "Erro no servidor interno"))
            .RequireAuthorization();
 
-        app.MapPut("api/pedidos/{cpf}/inativar", InativarPedidosCliente)
+        app.MapPut("api/pedidos/inativar/{cpf}", InativarPedidosCliente)
            .WithTags(EndpointTagConstantes.TAG_PEDIDO)
            .WithMetadata(new SwaggerOperationAttribute(summary: "Inativar dados do cliente nos pedidos", description: "Inativa dados relacionados ao cliente"))
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.OK, type: typeof(List<StatusPedidoResponseDTO>), description: "Operação realizada com sucesso"))
