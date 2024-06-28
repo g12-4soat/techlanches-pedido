@@ -60,18 +60,21 @@ builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    await next();
+});
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 
 app.AddCustomMiddlewares();
 
 app.UseDatabaseConfiguration();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-
-}
 app.UseRouting();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
