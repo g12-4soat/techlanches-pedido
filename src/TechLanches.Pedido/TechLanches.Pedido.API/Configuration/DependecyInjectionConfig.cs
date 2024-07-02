@@ -19,33 +19,33 @@ namespace TechLanches.Adapter.API.Configuration
         {
             if (services is null) throw new ArgumentNullException(nameof(services));
 
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoCriadoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoCanceladoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoCanceladoPorPagamentoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoEmPreparacaoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoDescartadoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoFinalizadoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoProntoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoRecebidoValidacao>();
-            services.AddScoped<IStatusPedidoValidacao, StatusPedidoRetiradoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoCriadoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoCanceladoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoCanceladoPorPagamentoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoEmPreparacaoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoDescartadoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoFinalizadoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoProntoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoRecebidoValidacao>();
+            services.AddSingleton<IStatusPedidoValidacao, StatusPedidoRetiradoValidacao>();
 
-            services.AddScoped<IPagamentoGateway, PagamentoGateway>();
+            services.AddSingleton<IPagamentoGateway, PagamentoGateway>();
 
             services.AddSingleton<IProdutoPresenter, ProdutoPresenter>();
             services.AddSingleton<IPedidoPresenter, PedidoPresenter>();
 
-            services.AddScoped<IProdutoController, ProdutoController>();
-            services.AddScoped<IPedidoController, PedidoController>();
-            services.AddScoped<ICheckoutController, CheckoutController>();            
+            services.AddSingleton<IProdutoController, ProdutoController>();
+            services.AddSingleton<IPedidoController, PedidoController>();
+            services.AddSingleton<ICheckoutController, CheckoutController>();            
 
-            services.AddScoped<IStatusPedidoValidacaoService, StatusPedidoValidacaoService>();
+            services.AddSingleton<IStatusPedidoValidacaoService, StatusPedidoValidacaoService>();
 
-            services.AddScoped<IPedidoRepository, PedidoRepository>();
-            services.AddScoped<IProdutoRepository, ProdutoRepository>();
+            services.AddSingleton<IPedidoRepository, PedidoRepository>();
+            services.AddSingleton<IProdutoRepository, ProdutoRepository>();
 
             services.AddSingleton<IRabbitMqService, RabbitMqService>();
 
-            services.AddScoped<JwtTokenMiddleware>();
+            services.AddSingleton<JwtTokenMiddleware>();
         }
     }
 }

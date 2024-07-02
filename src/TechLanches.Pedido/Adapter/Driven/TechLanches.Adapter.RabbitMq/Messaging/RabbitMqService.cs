@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json;
 using TechLanches.Adapter.RabbitMq.Options;
 
 namespace TechLanches.Adapter.RabbitMq.Messaging
@@ -26,17 +27,54 @@ namespace TechLanches.Adapter.RabbitMq.Messaging
                                   autoDelete: false,
                                   arguments: null);
 
+            _channel.QueueDeclare(queue: _rabbitOptions.QueueOrderCreated,
+                                 durable: true,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+
+            _channel.QueueDeclare(queue: _rabbitOptions.QueueOrderStatus,
+                                durable: true,
+                                exclusive: false,
+                                autoDelete: false,
+                                arguments: null);
+
             _channel.BasicQos(0, 1, false);
         }
 
-        public void Publicar(IBaseMessage baseMessage)
+        public async Task Consumir(Func<PedidoStatusMessage, Task> function)
+        {
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                try
+                {
+                    var body = ea.Body.ToArray();
+                    var message = JsonSerializer.Deserialize<PedidoStatusMessage>(body);
+                    await function(message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao processar mensagem: {ex.Message}");
+                }
+                finally
+                {
+                    _channel.BasicAck(ea.DeliveryTag, false);
+                }
+            };
+
+            _channel.BasicConsume(queue: _rabbitOptions.QueueOrderStatus, autoAck: false, consumer: consumer);
+        }
+
+        public void Publicar(IBaseMessage baseMessage, string queueName)
         {
             var mensagem = Encoding.UTF8.GetBytes(baseMessage.GetMessage());
 
             var properties = _channel.CreateBasicProperties();
             properties.DeliveryMode = 2; // Marca a mensagem como persistente
             _channel.BasicPublish(exchange: string.Empty,
-                                  routingKey: _rabbitOptions.Queue,
+                                  routingKey: queueName,
                                   basicProperties: properties,
                                   body: mensagem);
         }

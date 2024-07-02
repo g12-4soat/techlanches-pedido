@@ -126,10 +126,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
         {
             return new PagamentoResponseDTO()
             {
-                Id = Guid.NewGuid().ToString(),
                 PedidoId = 1,
                 QRCodeData = string.Empty,
-                StatusPagamento = StatusPagamento.Aprovado.ToString(),
                 Valor = (decimal)new Random().NextDouble()
             };
         }

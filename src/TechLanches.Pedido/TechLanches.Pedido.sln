@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapter", "Adapter", "{2AA2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F273F593-7F4D-4DC2-83B5-6975864092D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechLanches.Pedido.Tests", "..\..\test\TechLanches.Pedido.Tests\TechLanches.Pedido.Tests.csproj", "{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechLanches.Pedido.Tests", "..\..\test\TechLanches.Pedido.Tests\TechLanches.Pedido.Tests.csproj", "{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechLanches.Pedido.Consumer", "TechLanches.Pedido.Consumer\TechLanches.Pedido.Consumer.csproj", "{DBCF101A-94EC-4A84-BABD-E27B0F218E57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA43BE9C-49A9-4A9F-8C34-CB7D138AEFF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBCF101A-94EC-4A84-BABD-E27B0F218E57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBCF101A-94EC-4A84-BABD-E27B0F218E57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBCF101A-94EC-4A84-BABD-E27B0F218E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBCF101A-94EC-4A84-BABD-E27B0F218E57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

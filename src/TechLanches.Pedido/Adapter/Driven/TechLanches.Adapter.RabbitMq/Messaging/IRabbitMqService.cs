@@ -2,6 +2,7 @@
 {
     public interface IRabbitMqService
     {
-        void Publicar(IBaseMessage baseMessage);
+        void Publicar(IBaseMessage baseMessage, string queueName);
+        Task Consumir(Func<PedidoStatusMessage, Task> function);
     }
 }

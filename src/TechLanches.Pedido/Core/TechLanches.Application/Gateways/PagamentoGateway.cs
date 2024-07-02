@@ -30,10 +30,11 @@ namespace TechLanches.Application.Gateways
 
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/pagamentos", pagamentoRequest);
+                var response = await _httpClient.PostAsJsonAsync("api/pagamentos/qrcode", pagamentoRequest);
 
                 var result = await response.Content.ReadFromJsonAsync<PagamentoResponseDTO>();
-
+                result.PedidoId = pagamentoRequest.PedidoId;
+                result.Valor = pagamentoRequest.Valor;
                 return result;
             }
             catch (Exception ex)
