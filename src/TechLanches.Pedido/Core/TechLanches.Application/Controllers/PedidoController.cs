@@ -91,7 +91,9 @@ namespace TechLanches.Application.Controllers
                     _rabbitmqService.Publicar(message, _rabbitOptions.Queue);
                 }
 
-            return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+                scope.Complete();
+                return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+            }
         }
 
         public async Task<bool> InativarDadosCliente(string cpf)
@@ -115,11 +117,6 @@ namespace TechLanches.Application.Controllers
             }
 
             return sucesso;
-        }
-    }
-                scope.Complete();
-                return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
-            }
         }
 
         public async Task ProcessarMensagem(PedidoStatusMessage message)
