@@ -13,7 +13,7 @@ namespace TechLanches.Domain.Aggregates
         {
             Cpf = cpf;
             StatusPedido = StatusPedido.PedidoCriado;
-            _itensPedido = new List<ItemPedido>();
+            _itensPedido = new();
             AdicionarItensPedidos(itensPedido);
             Validar();
         }
@@ -23,6 +23,7 @@ namespace TechLanches.Domain.Aggregates
         public Cpf Cpf { get; private set; }
         public decimal Valor { get; private set; }
         public StatusPedido StatusPedido { get; private set; }
+        public bool ClienteInativo { get; private set; }
 
         private void AdicionarItensPedidos(List<ItemPedido> itensPedido)
         {
@@ -48,6 +49,11 @@ namespace TechLanches.Domain.Aggregates
 
             validacaoService.Validar(StatusPedido, statusPedidoNovo);
             StatusPedido = statusPedidoNovo;
+        }
+
+        public void InativarCliente()
+        {
+            ClienteInativo = true;
         }
 
         private void Validar()

@@ -91,6 +91,32 @@ namespace TechLanches.Application.Controllers
                     _rabbitmqService.Publicar(message, _rabbitOptions.Queue);
                 }
 
+            return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
+        }
+
+        public async Task<bool> InativarDadosCliente(string cpf)
+        {
+            var sucesso = true;
+
+            var listaPedidos = await _pedidoGateway.BuscarTodos();
+
+            var pedidos = listaPedidos.Where(x => x.Cpf.Numero == cpf).ToList();
+
+            if (pedidos.Count > 0)
+            {
+                foreach (var pedido in pedidos)
+                {
+                    pedido.InativarCliente();
+                }
+
+                await _pedidoGateway.CommitAsync();
+
+                sucesso = pedidos.All(x => x.ClienteInativo);
+            }
+
+            return sucesso;
+        }
+    }
                 scope.Complete();
                 return await _pedidoPresenter.ParaDto(pedido, _pagamentoGateway);
             }

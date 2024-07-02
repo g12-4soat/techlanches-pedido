@@ -4,5 +4,6 @@
     {
         public const string CPF_USER_DEFAULT = "61872530001";
         public const string USER_DEFAULT = "techlanches";
+        public const string USER_NAO_IDENTIFICADO = "Usuário não identificado";
     }
 }
