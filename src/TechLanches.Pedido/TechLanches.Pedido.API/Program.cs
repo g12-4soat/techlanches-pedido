@@ -58,10 +58,9 @@ var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
 //Registrar httpclient
 builder.Services.AddHttpClient(Constants.NOME_API_PAGAMENTOS, httpClient =>
 {
-    //var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
-    //httpClient.BaseAddress = new Uri("http://" + url + ":5055");
+    var url = Environment.GetEnvironmentVariable("PAGAMENTO_SERVICE")!;
+    httpClient.BaseAddress = new Uri("http://" + url + ":5055");
 
-    httpClient.BaseAddress = new Uri("https://localhost:7138");
 }).AddPolicyHandler(retryPolicy);
 
 var app = builder.Build();
