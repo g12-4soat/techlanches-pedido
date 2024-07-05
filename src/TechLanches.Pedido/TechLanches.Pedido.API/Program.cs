@@ -25,13 +25,20 @@ builder.Services.Configure<TechLanchesCognitoSecrets>(builder.Configuration);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 //Add cognito auth
 builder.Services.Configure<AuthenticationCognitoOptions>(builder.Configuration.GetSection("Authentication"));
 builder.Services.AddAuthenticationConfig();
 
 //Setting Swagger
 builder.Services.AddSwaggerConfiguration();
+
+builder.Services.AddHsts(options =>
+{
+    //options.ExcludedHosts.Clear();
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(60);
+});
 
 builder.Services.AddMemoryCache();
 
@@ -71,8 +78,8 @@ app.Use(async (context, next) =>
 });
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHsts();
 }
+app.UseHsts();
 
 app.AddCustomMiddlewares();
 
