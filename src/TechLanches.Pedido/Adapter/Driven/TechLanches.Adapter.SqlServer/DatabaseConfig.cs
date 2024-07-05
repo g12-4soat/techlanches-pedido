@@ -10,7 +10,7 @@ namespace TechLanches.Adapter.SqlServer
     {
         public static void AddDatabaseConfiguration(
             this IServiceCollection services,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
             if (services is null) throw new ArgumentNullException(nameof(services));
 

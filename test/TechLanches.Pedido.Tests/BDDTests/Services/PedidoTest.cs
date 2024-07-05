@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using TechLanches.Adapter.RabbitMq;
 using TechLanches.Adapter.RabbitMq.Messaging;
+using TechLanches.Adapter.RabbitMq.Options;
 using TechLanches.Application.Gateways.Interfaces;
 using TechLanches.Domain.Aggregates;
 using TechLanchesPedido.Tests.Fixtures;
@@ -21,7 +23,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
         private IRabbitMqService _rabbitMqService;
         private readonly PedidoFixture _pedidoFixture;
         private DomainException _domainException;
-
+        private IOptions<RabbitOptions> _rabbitMqOptions;
         public PedidoTest(PedidoFixture pedidoFixture)
         {
             _pedidoFixture = pedidoFixture;
@@ -50,7 +52,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
         {
             Given_PedidosValidos();
             await When_BuscarPorStatus();
-            Then_DeveRetornarListaDePedidosNaoVazia();            
+            Then_DeveRetornarListaDePedidosNaoVazia();
             await _pedidoRepository.Received().BuscarPorStatus(StatusPedido.PedidoEmPreparacao);
         }
 
@@ -135,6 +137,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { QueueOrderCreated = "teste" });
 
             _pedidoRepository.Cadastrar(_pedido).Returns(_pedido);
 
@@ -143,7 +146,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway,
+                _rabbitMqOptions);
 
             _pedidoResponseDto = await pedidoController.Cadastrar(_cpf, _itensPedidos);
         }
@@ -153,6 +157,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { Queue = "teste" });
 
             _pedidoRepository.BuscarPorId(_pedido.Id).Returns(_pedido);
 
@@ -161,7 +166,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService!,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway,
+                _rabbitMqOptions);
 
             _pedidoResponseDto = await pedidoController.TrocarStatus(_pedido.Id, StatusPedido.PedidoRecebido);
         }
@@ -171,6 +177,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { Queue = "teste" });
 
             _pedidoRepository.BuscarPorId(_pedido.Id).Returns(_pedido);
 
@@ -179,9 +186,10 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService!,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway
+                , _rabbitMqOptions);
 
-            _domainException = await Assert.ThrowsAsync<DomainException>(async () 
+            _domainException = await Assert.ThrowsAsync<DomainException>(async ()
                 => await pedidoController.TrocarStatus(_pedido.Id, StatusPedido.PedidoFinalizado));
         }
 
@@ -190,6 +198,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { Queue = "teste" });
 
             _pedidoRepository.BuscarPorId(Arg.Any<int>()).Returns(_pedido);
 
@@ -198,7 +207,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService!,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway
+                , _rabbitMqOptions);
 
             _domainException = await Assert.ThrowsAsync<DomainException>(async ()
                 => await pedidoController.TrocarStatus(Arg.Any<int>(), StatusPedido.PedidoFinalizado));
@@ -209,6 +219,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { Queue = "teste" });
 
             _pedidoRepository.BuscarPorStatus(StatusPedido.PedidoEmPreparacao).Returns(_pedidos);
 
@@ -217,7 +228,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService!,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway
+                , _rabbitMqOptions);
 
             _pedidosResponseDto = await pedidoController.BuscarPorStatus(StatusPedido.PedidoEmPreparacao);
         }
@@ -227,6 +239,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { Queue = "teste" });
 
             _pedidoRepository.BuscarPorId(_pedido.Id).Returns(_pedido);
 
@@ -235,7 +248,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService!,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway
+                , _rabbitMqOptions);
 
             _pedidoResponseDto = await pedidoController.BuscarPorId(_pedido.Id);
         }
@@ -245,6 +259,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
             _pedidoRepository = Substitute.For<IPedidoRepository>();
             _rabbitMqService = Substitute.For<IRabbitMqService>();
             _pagamentoGateway = Substitute.For<IPagamentoGateway>();
+            _rabbitMqOptions = Options.Create(new RabbitOptions { Queue = "teste" });
 
             _pedidoRepository.BuscarTodos().Returns(_pedidoFixture.GerarPedidosValidos());
             var pedidoController = new PedidoController(
@@ -252,7 +267,8 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
                 new PedidoPresenter(),
                 _pedidoFixture.StatusPedidoValidacaoService!,
                 _rabbitMqService,
-                _pagamentoGateway);
+                _pagamentoGateway
+                , _rabbitMqOptions);
 
             _pedidosResponseDto = await pedidoController.BuscarTodos();
         }
@@ -283,7 +299,7 @@ namespace TechLanchesPedido.Tests.BDDTests.Services
 
         private void Then_DevePublicarMensagemTrocaStatus()
         {
-            _rabbitMqService.Received(1).Publicar(Arg.Any<IBaseMessage>());
+            _rabbitMqService.Received(1).Publicar(Arg.Any<IBaseMessage>(), Arg.Any<string>());
         }
 
         private void Then_DeveLancarDomainException()

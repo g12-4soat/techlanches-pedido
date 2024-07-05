@@ -6,5 +6,7 @@
         public string User { get; set; }
         public string Password { get; set; }
         public string Queue { get; set; }
+        public string QueueOrderCreated { get; set; }
+        public string QueueOrderStatus { get; set; }
     }
 }

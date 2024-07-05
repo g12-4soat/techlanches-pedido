@@ -6,11 +6,6 @@
     public class PagamentoResponseDTO
     {
         /// <summary>
-        /// Id do Pagamento
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
         /// Id Pedido
         /// </summary>
         /// <example>1</example>
@@ -28,10 +23,5 @@
         /// <example>qrcodedata</example>
         public string QRCodeData { get; set; }
 
-        /// <summary>
-        /// Status Pagamento
-        /// </summary>
-        /// <example>Aprovado</example>
-        public string StatusPagamento { get; set; }
     }
 }

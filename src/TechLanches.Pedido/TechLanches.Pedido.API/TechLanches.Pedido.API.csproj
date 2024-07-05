@@ -29,6 +29,7 @@
     <ProjectReference Include="..\Adapter\Driven\TechLanches.Adapter.SqlServer\TechLanches.Adapter.SqlServer.csproj" />
     <ProjectReference Include="..\Core\TechLanches.Application\TechLanches.Application.csproj" />
     <ProjectReference Include="..\Core\TechLanches.Domain\TechLanches.Domain.csproj" />
+    <ProjectReference Include="..\TechLanches.Pedido.Consumer\TechLanches.Pedido.Consumer.csproj" />
   </ItemGroup>
 
 </Project>
