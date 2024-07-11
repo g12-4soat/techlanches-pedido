@@ -32,13 +32,17 @@ builder.Services.AddAuthenticationConfig();
 //Setting Swagger
 builder.Services.AddSwaggerConfiguration();
 
-builder.Services.AddHsts(options =>
+if (!builder.Environment.IsDevelopment())
 {
-    //options.ExcludedHosts.Clear();
-    options.Preload = true;
-    options.IncludeSubDomains = true;
-    options.MaxAge = TimeSpan.FromDays(60);
-});
+    builder.Services.AddHsts(options =>
+    {
+        options.Preload = true;
+        options.IncludeSubDomains = true;
+        options.MaxAge = TimeSpan.FromDays(60);
+    });
+}
+
+
 
 builder.Services.AddMemoryCache();
 
@@ -78,8 +82,8 @@ app.Use(async (context, next) =>
 });
 if (!app.Environment.IsDevelopment())
 {
+    app.UseHsts();
 }
-app.UseHsts();
 
 app.AddCustomMiddlewares();
 
