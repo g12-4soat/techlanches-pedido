@@ -7,6 +7,7 @@ using TechLanches.Domain.Enums;
 using TechLanches.Application.Controllers.Interfaces;
 using TechLanches.Domain.ValueObjects;
 using TechLanches.Domain.Constantes;
+using System.Collections.Generic;
 
 namespace TechLanches.Adapter.API.Endpoints;
 
@@ -62,11 +63,20 @@ public static class PedidoEndpoints
         app.MapPut("api/pedidos/inativar/{cpf}", InativarPedidosCliente)
            .WithTags(EndpointTagConstantes.TAG_PEDIDO)
            .WithMetadata(new SwaggerOperationAttribute(summary: "Inativar dados do cliente nos pedidos", description: "Inativa dados relacionados ao cliente"))
-           .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.OK, type: typeof(List<StatusPedidoResponseDTO>), description: "Operação realizada com sucesso"))
+           .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.OK, type: typeof(bool), description: "Operação realizada com sucesso"))
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.BadRequest, type: typeof(ErrorResponseDTO), description: "Requisição inválida"))
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.NotFound, type: typeof(ErrorResponseDTO), description: "Pedidos do cliente não encontrados"))
            .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.InternalServerError, type: typeof(ErrorResponseDTO), description: "Erro no servidor interno"))
            .RequireAuthorization();
+
+        app.MapGet("api/pedidos/cliente/{cpf}", BuscarPedidosPorCpf)
+          .WithTags(EndpointTagConstantes.TAG_PEDIDO)
+          .WithMetadata(new SwaggerOperationAttribute(summary: "Buscar pedidos por CPF de cliente", description: "Busca todos os pedidos por CPF de cliente"))
+          .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.OK, type: typeof(List<PedidoResponseDTO>), description: "Operação realizada com sucesso"))
+          .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.BadRequest, type: typeof(ErrorResponseDTO), description: "Requisição inválida"))
+          .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.NotFound, type: typeof(ErrorResponseDTO), description: "Pedidos do cliente não encontrados"))
+          .WithMetadata(new SwaggerResponseAttribute((int)HttpStatusCode.InternalServerError, type: typeof(ErrorResponseDTO), description: "Erro no servidor interno"))
+          .RequireAuthorization();
     }
 
 
@@ -155,5 +165,32 @@ public static class PedidoEndpoints
         return statusPedidos is not null && statusPedidos.Count > 0
             ? Results.Ok(await Task.FromResult(statusPedidos))
             : Results.NotFound(new ErrorResponseDTO { MensagemErro = "Nenhum status encontrado.", StatusCode = HttpStatusCode.NotFound });
+    }
+
+    private static async Task<IResult> BuscarPedidosPorCpf(
+        [FromRoute] string cpf,
+        [FromServices] IPedidoController pedidoController)
+    {
+        if (string.IsNullOrWhiteSpace(cpf))
+            Results.BadRequest(new ErrorResponseDTO { MensagemErro = "CPF Inválido.", StatusCode = HttpStatusCode.BadRequest });
+
+        List<PedidoResponseDTO> retorno = new();
+
+        try
+        {
+            var cpfValido = new Cpf(cpf);
+
+            var pedidos = await pedidoController.BuscarTodos();
+
+            retorno = pedidos.Where(x => x.ClienteCpf == cpfValido.Numero).ToList();
+        }
+        catch (Exception)
+        {
+            Results.BadRequest(new ErrorResponseDTO { MensagemErro = "CPF Inválido.", StatusCode = HttpStatusCode.BadRequest });
+        }
+
+        return retorno.Count > 0
+           ? Results.Ok(retorno)
+           : Results.NotFound(new ErrorResponseDTO { MensagemErro = "Pedidos não encontrados.", StatusCode = HttpStatusCode.NotFound });
     }
 }
